@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>547</height>
+    <width>1000</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,13 +18,13 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>600</width>
-    <height>500</height>
+    <width>100</width>
+    <height>600</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>600</width>
+    <width>1000</width>
     <height>600</height>
    </size>
   </property>
@@ -129,9 +129,9 @@
    <widget class="QPushButton" name="add_hole_pushButton">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>430</x>
       <y>180</y>
-      <width>151</width>
+      <width>201</width>
       <height>41</height>
      </rect>
     </property>
@@ -146,9 +146,9 @@ color: rgb(255, 255, 255);</string>
    <widget class="QPushButton" name="delete_hole_pushButton">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>430</x>
       <y>250</y>
-      <width>151</width>
+      <width>201</width>
       <height>41</height>
      </rect>
     </property>
@@ -165,7 +165,7 @@ color: rgb(255, 255, 255);</string>
      <rect>
       <x>340</x>
       <y>40</y>
-      <width>41</width>
+      <width>91</width>
       <height>21</height>
      </rect>
     </property>
@@ -211,8 +211,8 @@ color: rgb(255, 255, 255);</string>
    <widget class="QPushButton" name="add_old_processes_pushButton">
     <property name="geometry">
      <rect>
-      <x>400</x>
-      <y>390</y>
+      <x>470</x>
+      <y>380</y>
       <width>121</width>
       <height>51</height>
      </rect>
@@ -226,7 +226,7 @@ color: rgb(255, 255, 255);</string>
      <rect>
       <x>20</x>
       <y>380</y>
-      <width>421</width>
+      <width>351</width>
       <height>71</height>
      </rect>
     </property>
@@ -240,7 +240,7 @@ color: rgb(255, 255, 255);</string>
      <font>
       <pointsize>8</pointsize>
       <weight>75</weight>
-      <italic>true</italic>
+      <italic>false</italic>
       <bold>true</bold>
       <underline>false</underline>
       <strikeout>false</strikeout>
@@ -271,7 +271,7 @@ color: rgb(255, 255, 255);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>600</width>
+     <width>1000</width>
      <height>21</height>
     </rect>
    </property>
