@@ -2,6 +2,7 @@ import sys
 from PyQt5 import QtWidgets as qtw
 from PyQt5.QtWidgets import QDialog, QApplication
 from process import Ui_Form
+from ProcessClass import Process
 
 
 class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
@@ -10,6 +11,8 @@ class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
 
         self.ui = Ui_Form()
         self.ui.setupUi(self)
+        self.process_index = 0
+        self.algorithm = self.ui.algorithm
 
         # add segment to process_table
         self.ui.add_segment_button.clicked.connect(self._addRow)
@@ -17,27 +20,63 @@ class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
         # add new process
         self.ui.add_process_button.clicked.connect(self._addNewProcess)
 
+        # allocate button
+        self.ui.allocate_button.clicked.connect(self._addNewProcess)
+
+        # show mem
+
+
+
     def _addRow(self):
         no_of_segments = self.ui.number_of_segments.text()
         row_count = self.ui.process_table.rowCount()
         print(no_of_segments)
+
+        # check that we don't enter all seg yet
         if row_count < (int(no_of_segments)):
             self.ui.process_table.insertRow(self.ui.process_table.rowCount())
+
+        # check if the user didn't enter num of segments
+        elif int(no_of_segments) == 0:
+            qtw.QMessageBox.critical(self, 'fail', "please, enter number of segments of this process")
+
+        # check if the user enter add seg and all the allowed seg are added
         else:
-            qtw.QMessageBox.critical(self, 'fail', "all segments've been added")
+            qtw.QMessageBox.critical(self, 'fail', "all segments have been added")
 
     def _addNewProcess(self):
-        self.clearScreen()
+        if int(self.ui.number_of_segments.text()) == 0:
+            qtw.QMessageBox.critical(self, 'fail', "please, enter number of segments of this process")
+        else:
+            self.ui.algorithm.setEnabled(False)  # disable comboBox
+            p = self.createSegments()
+            print(p)
+            self.process_index += 1
+            print(self.process_index)
+            self.clearScreen()
 
     def clearScreen(self):
         no_of_segments = self.ui.number_of_segments.text()
         if self.ui.process_table.rowCount() < int(no_of_segments):
             qtw.QMessageBox.critical(self, 'warning', "please, add all segments of this process")
         else:
+            self.ui.number_of_segments.clear()
             while self.ui.process_table.rowCount() > 0:
                 self.ui.process_table.removeRow(self.ui.process_table.rowCount() - 1)
 
-    # def _allocate(self):
+    def createSegments(self):
+        number_of_dictionaries = int(self.ui.number_of_segments.text())
+        list_of_segments = [dict() for number in range(number_of_dictionaries)]
+        for seg_index in range(number_of_dictionaries):
+            list_of_segments[seg_index]['name'] = self.ui.process_table.item(seg_index, 0).text()
+            list_of_segments[seg_index]['size'] = int(self.ui.process_table.item(seg_index, 1).text())
+        return list_of_segments
+
+    #def _toMem(self):
+    #show mem
+    #def allocate_to_mem(self):
+    #functions from backend
+
 
 
 if __name__ == "__main__":
