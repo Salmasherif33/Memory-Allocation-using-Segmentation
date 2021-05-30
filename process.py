@@ -24,7 +24,7 @@ class Ui_Form(object):
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.process_table = QtWidgets.QTableWidget(Form)
-        self.process_table.setGeometry(QtCore.QRect(30, 90, 411, 331))
+        self.process_table.setGeometry(QtCore.QRect(30, 90, 451, 331))
         self.process_table.setShowGrid(True)
         self.process_table.setRowCount(0)
         self.process_table.setObjectName("process_table")
@@ -77,6 +77,18 @@ class Ui_Form(object):
         self.number_of_segments = QtWidgets.QSpinBox(Form)
         self.number_of_segments.setGeometry(QtCore.QRect(200, 30, 71, 31))
         self.number_of_segments.setObjectName("number_of_segments")
+        self.algorithm = QtWidgets.QComboBox(Form)
+        self.algorithm.setGeometry(QtCore.QRect(480, 30, 73, 31))
+        self.algorithm.setObjectName("algorithm")
+        self.algorithm.addItem("")
+        self.algorithm.addItem("")
+        self.algorithm.addItem("")
+        self.label_2 = QtWidgets.QLabel(Form)
+        self.label_2.setGeometry(QtCore.QRect(290, 20, 191, 51))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.label_2.setFont(font)
+        self.label_2.setObjectName("label_2")
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -94,6 +106,10 @@ class Ui_Form(object):
         self.add_process_button.setText(_translate("Form", "Add new process"))
         self.deallocate_button.setText(_translate("Form", "Deallocate"))
         self.add_segment_button.setText(_translate("Form", "Add Segment"))
+        self.algorithm.setItemText(0, _translate("Form", "First Fit"))
+        self.algorithm.setItemText(1, _translate("Form", "Best Fit"))
+        self.algorithm.setItemText(2, _translate("Form", "Worst Fit"))
+        self.label_2.setText(_translate("Form", "Algorithm of allocation:"))
 
 
 if __name__ == "__main__":
