@@ -91,7 +91,6 @@ class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
         #should add myList = memoryMap()
         self.ui.setupUi(self.window,myList)
         self.window.show()
-        self.close(self.ProcessMainWindow(qtw.QMainWindow, Ui_Form))
 
     def _addRow(self):
         no_of_segments = self.ui.number_of_segments.text()
