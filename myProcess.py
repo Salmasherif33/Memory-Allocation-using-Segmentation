@@ -13,7 +13,8 @@ class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
         self.ui.setupUi(self)
         self.process_index = 0
         self.algorithm = self.ui.algorithm
-
+        self.ui.process_table.insertRow(self.ui.process_table.rowCount())
+        
         # add segment to process_table
         self.ui.add_segment_button.clicked.connect(self._addRow)
 
