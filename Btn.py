@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from Second_Try import Ui_ChartWindow
+from Plotting import Ui_ChartWindow
 
 myList = [
             {
