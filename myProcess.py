@@ -1,8 +1,8 @@
 import sys
 from PyQt5 import QtWidgets as qtw
 from PyQt5.QtWidgets import QDialog, QApplication
-from process import Ui_Form
-from ProcessClass import Process
+from GUI_process import Ui_Form
+from Process import Process
 
 
 class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
@@ -47,6 +47,8 @@ class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
     def _addNewProcess(self):
         if int(self.ui.number_of_segments.text()) == 0:
             qtw.QMessageBox.critical(self, 'fail', "please, enter number of segments of this process")
+        elif self.ui.process_table.rowCount() < int(self.ui.number_of_segments.text()):
+            qtw.QMessageBox.critical(self, 'warning', "please, add all segments of this process")
         else:
             self.ui.algorithm.setEnabled(False)  # disable comboBox
             p = self.createSegments()
