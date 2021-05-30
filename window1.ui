@@ -111,18 +111,35 @@
      <rect>
       <x>10</x>
       <y>150</y>
-      <width>321</width>
-      <height>192</height>
+      <width>361</width>
+      <height>251</height>
      </rect>
     </property>
+    <attribute name="horizontalHeaderDefaultSectionSize">
+     <number>150</number>
+    </attribute>
     <column>
      <property name="text">
       <string>Start address</string>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
      </property>
     </column>
     <column>
      <property name="text">
       <string>Size</string>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
      </property>
     </column>
    </widget>
@@ -211,9 +228,9 @@ color: rgb(255, 255, 255);</string>
    <widget class="QPushButton" name="add_old_processes_pushButton">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>380</y>
-      <width>121</width>
+      <x>560</x>
+      <y>400</y>
+      <width>141</width>
       <height>51</height>
      </rect>
     </property>
@@ -224,9 +241,9 @@ color: rgb(255, 255, 255);</string>
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>380</y>
-      <width>351</width>
+      <x>10</x>
+      <y>390</y>
+      <width>611</width>
       <height>71</height>
      </rect>
     </property>
@@ -238,7 +255,7 @@ color: rgb(255, 255, 255);</string>
     </property>
     <property name="font">
      <font>
-      <pointsize>8</pointsize>
+      <pointsize>10</pointsize>
       <weight>75</weight>
       <italic>false</italic>
       <bold>true</bold>
@@ -272,7 +289,7 @@ color: rgb(255, 255, 255);</string>
      <x>0</x>
      <y>0</y>
      <width>1000</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
