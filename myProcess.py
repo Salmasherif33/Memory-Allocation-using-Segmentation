@@ -3,7 +3,65 @@ from PyQt5 import QtWidgets as qtw
 from PyQt5.QtWidgets import QDialog, QApplication
 from GUI_process import Ui_Form
 from Process import Process
+from Plotting import Ui_ChartWindow
 
+myList = [
+            {
+                'name': "P1:code",
+                'start': 0,
+                'end': 70
+            },
+            {
+                'name': "hole1",
+                'start': 70,
+                'end': 150
+            },
+            {
+                'name': "P2:Data",
+                'start': 150,
+                'end': 300
+            },
+            {
+                'name': "P2:code",
+                'start': 300,
+                'end': 600
+            },
+            {
+                'name': "P2:Data",
+                'start': 600,
+                'end': 685
+            },
+            {
+                'name': "P2:Data",
+                'start': 600,
+                'end': 685
+            },
+            {
+                'name': "Hole",
+                'start': 600,
+                'end': 685
+            },
+            {
+                'name': "P2:code",
+                'start': 300,
+                'end': 600
+            },
+            {
+                'name': "P2:Data",
+                'start': 600,
+                'end': 685
+            },
+            {
+                'name': "P2:Data",
+                'start': 600,
+                'end': 685
+            },
+            {
+                'name': "P2:Data",
+                'start': 900,
+                'end': 1250
+            }
+        ]
 
 class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
     def __init__(self):
@@ -25,8 +83,15 @@ class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
         self.ui.allocate_button.clicked.connect(self._addNewProcess)
 
         # show mem
+        self.ui.memory_button.clicked.connect(self.openWindow)
 
-
+    def openWindow(self):
+        self.window = qtw.QMainWindow()
+        self.ui = Ui_ChartWindow()
+        #should add myList = memoryMap()
+        self.ui.setupUi(self.window,myList)
+        self.window.show()
+        self.close(self.ProcessMainWindow(qtw.QMainWindow, Ui_Form))
 
     def _addRow(self):
         no_of_segments = self.ui.number_of_segments.text()
@@ -83,6 +148,15 @@ class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
 
 
 if __name__ == "__main__":
+    # app = qtw.QApplication([])
+    # widget = qtw.QStackedWidget()
+    # mainWindow = Inputs()
+    # processes = ProcessMainWindow()
+    # widget.addWidget(mainWindow)
+    # widget.addWidget(processes)
+    # widget.show()
+    # app.exec_()
+
     app = qtw.QApplication([])
     widget = ProcessMainWindow()
     widget.show()
