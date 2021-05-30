@@ -11,8 +11,7 @@ class MemoryManager:
         self.total_memory_size = total_memory_size
         self.holes = list(map(lambda hole: Hole(hole[0], hole[0] + hole[1]), holes))
         self.old_processes = self._deduce_old_processes()
-        print(self.holes)
-        print(self.old_processes)
+        self.new_processes = []
 
     def allocate_best_fit(self, new_process: Process) -> bool:
         return True
