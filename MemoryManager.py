@@ -1,15 +1,15 @@
 from Process import Process
+from Hole import Hole
 from collections import namedtuple
 from typing import List
 
-Hole = namedtuple('Hole', ['start_address', 'end_address'])
 OldProcess = namedtuple('OldProcess', ['name', 'start_address', 'end_address'])
 
 
 class MemoryManager:
     def __init__(self, total_memory_size, holes):
         self.total_memory_size = total_memory_size
-        self.holes = list(map(lambda hole: Hole(hole[0], hole[0] + hole[1]), holes))
+        self.holes = list(map(lambda hole: Hole('Hole', hole[0], hole[0] + hole[1]), holes))
         self.old_processes = self._deduce_old_processes()
         self.new_processes = []
 
@@ -23,7 +23,22 @@ class MemoryManager:
         return True
 
     def get_memory_map(self) -> List[dict]:
-        return []
+        for i, hole in enumerate(self.holes):
+            hole.name = f"Hole{i}"
+        segments = []
+        for process in self.new_processes:
+            segments += process.get_segments()
+
+        blocks = self.holes + self.old_processes + segments
+        blocks.sort(key=lambda block: block.start_address)
+
+        result = list(map(lambda block: {
+            'name': block.name,
+            'start': block.start_address,
+            'end': block.end_address
+        }, blocks))
+
+        return result
 
     def external_compaction(self):
         pass
