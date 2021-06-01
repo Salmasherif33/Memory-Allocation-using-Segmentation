@@ -252,9 +252,11 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
             qtw.QMessageBox.critical(self, 'fail', "all segments have been added")
 
     def _addNewProcess(self):
-        if len(self.holes) <= 0:
+        if self.ui.number_of_segments.text() == '':
+            qtw.QMessageBox.critical(self, 'fail', "please, enter number of segments of this process")
+        elif len(self.holes) <= 0:
             qtw.QMessageBox.critical(self, 'warning', "please, add holes first")
-        elif int(self.ui.number_of_segments.text()) == 0:
+        elif int(self.ui.number_of_segments.text()) <= 0:
             qtw.QMessageBox.critical(self, 'fail', "please, enter number of segments of this process")
         elif self.ui.process_table.rowCount() < int(self.ui.number_of_segments.text()):
             qtw.QMessageBox.critical(self, 'warning', "please, add all segments of this process")
