@@ -1,5 +1,6 @@
 import sys
 from PyQt5 import QtWidgets as qtw
+from PyQt5 import QtCore
 from PyQt5.QtWidgets import QDialog, QApplication
 from GUI_process import Ui_Form
 from Process import Process
@@ -7,13 +8,27 @@ from Plotting import Ui_ChartWindow
 from myDeallocate import deallocateMainWindow
 from window_test import Ui_Window_test
 
+before_first_num1 = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n""<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n""p, li { white-space: pre-wrap; }\n""</style></head><body"
+new_process = " bgcolor=\"#00acff\" "
+hole = " bgcolor=\"#FA669A\" "
+old_process = " bgcolor=\"#e3f55a\" "
+color = " bgcolor=\"#e3f55a\" "
+before_first_num2 = " style=\" font-family:\'MS Shell Dlg 2\'; font-size:7.8pt; font-weight:400; font-style:normal;\">\n""<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt; font-weight:600;\">"
+before_name = "</span></p>\n""<p style=\" margin-top:13px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">              "
+far_before_last_num = "</span></p>\n""<p style=\" margin-top:"
+
+before_last_num= "px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt; font-weight:600;\">"
+ending = "</span></p></body></html>"
 
 class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
+
     def __init__(self):
         super().__init__()
 
         self.ui = Ui_Window_test()
         self.ui.setupUi(self)
+
+
         self.ui.size_doubleSpinBox.setMaximum(float('+inf'))
         self.ui.size_doubleSpinBox.setDecimals(5)
         self.ui.size_doubleSpinBox.clear()
@@ -48,6 +63,127 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
 
         # button to add old processes
         self.ui.add_old_processes_pushButton.clicked.connect(self.add_old_processes)
+
+        #button to update memory
+        self.ui.memory_button.clicked.connect(self.showMemory)
+
+    # Sharnoby's Part
+    def retranslateUiDraw(self, ChartWindow, text, i, length, myList, color):
+        _translate = QtCore.QCoreApplication.translate
+        self.ui.text.setHtml(_translate("ChartWindow", before_first_num1 + color + before_first_num2 + str(
+            myList[i]['start']) + before_name + myList[i]['name'] + far_before_last_num + "15" + before_last_num + str(
+            myList[i]['end']) + ending))
+
+    def showMemory(self):
+        if self.index == 0:
+            myList = [
+            {
+                'name': "P1:code",
+                'start': 0,
+                'end': 70
+            },
+            {
+                'name': "hole1",
+                'start': 70,
+                'end': 150
+            },
+            {
+                'name': "P2:Data",
+                'start': 150,
+                'end': 300
+            },
+            {
+                'name': "P2:code",
+                'start': 300,
+                'end': 600
+            },
+            {
+                'name': "P2:Data",
+                'start': 600,
+                'end': 685
+            },
+            {
+                'name': "P2:Data",
+                'start': 600,
+                'end': 685
+            },
+            {
+                'name': "Hole",
+                'start': 600,
+                'end': 685
+            },
+            {
+                'name': "P2:code",
+                'start': 300,
+                'end': 600
+            },
+            {
+                'name': "P2:Data",
+                'start': 600,
+                'end': 685
+            },
+            {
+                'name': "P2:Data",
+                'start': 600,
+                'end': 685
+            },
+            {
+                'name': "P2:Data",
+                'start': 900,
+                'end': 1250
+            }
+        ]
+            self.index = 1
+        else:
+            myList = [
+                {
+                    'name': "Hole",
+                    'start': 600,
+                    'end': 685
+                },
+                {
+                    'name': "P2:code",
+                    'start': 300,
+                    'end': 600
+                },
+                {
+                    'name': "P2:Data",
+                    'start': 600,
+                    'end': 685
+                },
+                {
+                    'name': "P2:Data",
+                    'start': 600,
+                    'end': 685
+                },
+                {
+                    'name': "P2:Data",
+                    'start': 900,
+                    'end': 1250
+                }
+            ]
+        for i in reversed(range(self.ui.verticalLayout_2.count())):
+            self.ui.verticalLayout_2.itemAt(i).widget().setParent(None)
+        #self.ui.verticalLayout_2.removeWidget(self.ui.text)
+
+        start = 0
+        for i in range(0, len(myList)):
+            text = str(i)
+            self.ui.text = qtw.QTextBrowser(self.ui.centralwidget)
+            length = myList[i]['end'] - myList[i]['start']
+            self.ui.text.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+            self.ui.text.setObjectName(text)
+            self.ui.verticalLayout_2.addWidget(self.ui.text)
+            start += length
+            # qtw.setCentralWidget(self.ui.centralwidget)
+            if myList[i]['name'][0] == 'P' or myList[i]['name'][0] == 'P':
+                color = new_process
+            elif myList[i]['name'][0] == 'H' or myList[i]['name'][0] == 'h':
+                color = hole
+            else:
+                color = old_process
+            self.retranslateUiDraw(self, text, i, length, myList, color)
+            QtCore.QTimer.singleShot(0, self.ui.scrollAreaWidgetContents_2.adjustSize)
 
     # salma's part
     def add_hole_row(self):
@@ -132,7 +268,11 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
         dea = deallocateMainWindow()
         widget1.addWidget(dea)
         widget1.setCurrentIndex(widget1.currentIndex() + 1)
-    # def _toMem(self):
+    index = 0
+
+
+
+# def _toMem(self):
     # show mem
     # def allocate_to_mem(self):
     # functions from backend

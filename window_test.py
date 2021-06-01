@@ -10,11 +10,22 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+before_first_num1 = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n""<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n""p, li { white-space: pre-wrap; }\n""</style></head><body"
+new_process = " bgcolor=\"#00acff\" "
+hole = " bgcolor=\"#FA669A\" "
+old_process = " bgcolor=\"#e3f55a\" "
+color = " bgcolor=\"#e3f55a\" "
+before_first_num2 = " style=\" font-family:\'MS Shell Dlg 2\'; font-size:7.8pt; font-weight:400; font-style:normal;\">\n""<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt; font-weight:600;\">"
+before_name = "</span></p>\n""<p style=\" margin-top:13px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">              "
+far_before_last_num = "</span></p>\n""<p style=\" margin-top:"
+before_last_num= "px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt; font-weight:600;\">"
+ending = "</span></p></body></html>"
+
 
 class Ui_Window_test(object):
     def setupUi(self, Window_test):
         Window_test.setObjectName("Window_test")
-        Window_test.resize(1208, 954)
+        Window_test.resize(1600, 954)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -167,6 +178,20 @@ class Ui_Window_test(object):
         font.setPointSize(13)
         self.label_6.setFont(font)
         self.label_6.setObjectName("label_6")
+        self.label_6 = QtWidgets.QLabel(self.centralwidget)
+        self.label_6.setGeometry(QtCore.QRect(500, 10, 281, 51))
+        font = QtGui.QFont()
+        font.setPointSize(13)
+        self.label_6.setFont(font)
+        self.label_6.setObjectName("label_6")
+
+        self.label_7 = QtWidgets.QLabel(self.centralwidget)
+        self.label_7.setGeometry(QtCore.QRect(1200, 10, 281, 51))
+        font = QtGui.QFont()
+        font.setPointSize(13)
+        self.label_7.setFont(font)
+        self.label_7.setObjectName("label_7")
+
         self.number_of_segments = QtWidgets.QSpinBox(self.centralwidget)
         self.number_of_segments.setGeometry(QtCore.QRect(850, 70, 71, 31))
         self.number_of_segments.setObjectName("number_of_segments")
@@ -213,6 +238,38 @@ class Ui_Window_test(object):
         self.actionpaste = QtWidgets.QAction(Window_test)
         self.actionpaste.setObjectName("actionpaste")
 
+        self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
+        self.scrollArea.setGeometry(QtCore.QRect(1200, 50, 221, 500))
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName("scrollArea")
+        self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 198, 50))
+        self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_2)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+
+        # start = 0
+        # for i in range(0,len(myList)):
+        #     text = str(i)
+        #     self.text = QtWidgets.QTextBrowser(self.centralwidget)
+        #     length = myList[i]['end'] - myList[i]['start']
+        #     self.text.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        #     self.text.setObjectName(text)
+        #     self.verticalLayout_2.addWidget(self.text)
+        #     start += length
+        #     Window_test.setCentralWidget(self.centralwidget)
+        #     if myList[i]['name'][0] == 'P' or myList[i]['name'][0] == 'P' :
+        #         color = new_process
+        #     elif myList[i]['name'][0] == 'H' or myList[i]['name'][0] == 'h' :
+        #         color = hole
+        #     else:
+        #         color = old_process
+        #     self.retranslateUiDraw(Window_test,text,i,length,myList,color)
+        #     QtCore.QTimer.singleShot(0, self.scrollAreaWidgetContents_2.adjustSize)
+        #
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents_2)
+        Window_test.setCentralWidget(self.centralwidget)
+
         self.retranslateUi(Window_test)
         QtCore.QMetaObject.connectSlotsByName(Window_test)
 
@@ -237,6 +294,7 @@ class Ui_Window_test(object):
         self.add_process_button.setText(_translate("Window_test", "Add new process"))
         self.label_5.setText(_translate("Window_test", "number of segments of this process:"))
         self.label_6.setText(_translate("Window_test", "Algorithm of allocation:"))
+        self.label_7.setText(_translate("Window_test", "Memory:"))
         self.algorithm.setItemText(0, _translate("Window_test", "First Fit"))
         self.algorithm.setItemText(1, _translate("Window_test", "Best Fit"))
         self.algorithm.setItemText(2, _translate("Window_test", "Worst Fit"))
@@ -249,12 +307,30 @@ class Ui_Window_test(object):
         self.actioncopy.setText(_translate("Window_test", "copy"))
         self.actionpaste.setText(_translate("Window_test", "paste"))
 
+    # def retranslateUiDraw(self, ChartWindow, text, i, length, myList, color):
+    #     _translate = QtCore.QCoreApplication.translate
+    #     self.text.setHtml(_translate("ChartWindow", before_first_num1 + color + before_first_num2 + str(
+    #         myList[i]['start']) + before_name + myList[i]['name'] + far_before_last_num + "15" + before_last_num + str(
+    #         myList[i]['end']) + ending))
+
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Window_test = QtWidgets.QMainWindow()
     ui = Ui_Window_test()
+    myList = [
+        {
+            'name':"hole",
+            'start': 0,
+            'end':25
+        },
+        {
+            'name': "process",
+            'start': 25,
+            'end': 250
+        }
+    ]
     ui.setupUi(Window_test)
     Window_test.show()
     sys.exit(app.exec_())

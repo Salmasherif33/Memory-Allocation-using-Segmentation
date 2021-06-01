@@ -28,14 +28,9 @@ new_dummy = [
 class deallocateMainWindow(qtw.QMainWindow, Ui_deallo):
     def __init__(self):
         super().__init__()
-<<<<<<< HEAD
         
         self.ui = Ui_deallo()
         self.ui.setupUi(self) 
-=======
-        self.ui = Ui_deallo()
-        self.ui.setupUi(self)
->>>>>>> 98c031dd3466286984f9f5567cd0634e322c65a8
 
         self.fil_new_table(new_dummy)
         self.fill_old_table(new_dummy)
