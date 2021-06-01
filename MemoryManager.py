@@ -66,10 +66,53 @@ class MemoryManager:
        
         return True
 
-    def allocate_worst_fit(self, new_process: Process) -> bool:
+    def allocate_worst_fit(self,  n_p) -> bool:
+        #print(self.holes)
+        self.holes_size.sort(key=sorting,reverse = True)
+        for i in self.holes_size:
+            cup =Hole("",i[0],i[1]+i[0])
+            self.output_holes.append(cup.str())
+        
+        for p_num in n_p.segments:
+        
+            h_num =[]
+            for h_num in self.holes_size:  
+                if p_num['size']<= h_num[1]:
+                    self.new_processes.append({'name':f"p{n_p.index}:{p_num['name']}",'size':p_num['size'],'start':h_num[0],'end':p_num['size']+h_num[0] })
+                  
+                    h_num[1]= h_num[1]-p_num['size']
+                    h_num[0]=p_num['size']+h_num[0]
+                    self.flag =0
+                    self.holes_size.sort(key=sorting,reverse = True)
+                    break
+                
+                if p_num['size']> h_num[1] :
+                    self.holes_size.sort(key=sorting,reverse = True)
+                    self.flag =1
+            
+            if self.flag ==1:
+              
+                self.new_processes.clear()
+                break         
+        
+       
+
+        if self.flag == 1:
+            #print (self.new_processes)
+            #print (self.output_holes)
+            return False 
+        self.output_holes.clear()
+        for i in self.holes_size:
+            cup =Hole("",i[0],i[1]+i[0])
+            self.output_holes.append(cup.str())
+           
+        #print (self.new_processes)
+        #print (self.output_holes)
+
         return True
 
-    def allocate_first_fit(self, new_process: Process) -> bool:
+    def allocate_first_fit(self, n_p) -> bool:
+
         return True
 
     def get_memory_map(self) -> List[dict]:
