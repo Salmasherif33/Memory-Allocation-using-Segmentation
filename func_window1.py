@@ -7,9 +7,8 @@ from PyQt5 import QtWidgets as qtw
 from PyQt5.QtWidgets import QDialog, QApplication
 from myProcess import ProcessMainWindow
 
-
 class Inputs(qtw.QMainWindow, Ui_InputWindow):
-    def __init__(self):
+    def __init__(self, hi):
         super().__init__()
 
         self.ui = Ui_InputWindow()
@@ -45,17 +44,28 @@ class Inputs(qtw.QMainWindow, Ui_InputWindow):
             rowCount = self.ui.old_holes_tableWidget.rowCount()
             holes = []
             memory_size = self.ui.size_doubleSpinBox.value()
-
+            flag = 0
             for row in range(rowCount):
                 start_adrr = self.ui.old_holes_tableWidget.item(row, 0).text()
                 size = self.ui.old_holes_tableWidget.item(row, 1).text()
-                hole = [start_adrr, size]
-                holes.append(hole)
+                if  start_adrr.isnumeric() == False or size.isnumeric == False:
+                    qtw.QMessageBox.critical(self, 'fail', f'You have to add an intger value in row {row}')
+                    holes = []
+                    flag = 1 
+                    break
+                else:
+                    hole = [start_adrr, size]
+                    holes.append(hole)
+                
+            
+            if len(holes) == 0 and flag == 0:
+                qtw.QMessageBox.critical(self, 'fail', 'You have to add holes to add processes')
+            else:
 
-            qtw.QMessageBox.information(self, 'success', 'Holes are added sucessfully')
-            print(holes)
-            print(memory_size)
-            widget.setCurrentIndex(widget.currentIndex()+1)
+                qtw.QMessageBox.information(self, 'success', 'Holes are added sucessfully')
+                print(holes)
+                print(memory_size)
+                widget.setCurrentIndex(widget.currentIndex()+1)
         except:
             qtw.QMessageBox.critical(self, 'fail', 'Something went wrong')
 

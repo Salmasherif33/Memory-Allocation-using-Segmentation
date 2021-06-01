@@ -8,6 +8,9 @@ from Plotting import Ui_ChartWindow
 class deallocateMainWindow(qtw.QMainWindow, Ui_deallo):
     def __init__(self):
         super().__init__()
+        
+        self.ui = Ui_deallo()
+        self.ui.setupUi(self) 
 
 
 
