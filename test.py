@@ -5,71 +5,19 @@ from GUI_process import Ui_Form
 from Process import Process
 from Plotting import Ui_ChartWindow
 from myDeallocate import deallocateMainWindow
-myList = [
-    {
-        'name': "P1:code",
-        'start': 0,
-        'end': 70
-    },
-    {
-        'name': "hole1",
-        'start': 70,
-        'end': 150
-    },
-    {
-        'name': "P2:Data",
-        'start': 150,
-        'end': 300
-    },
-    {
-        'name': "P2:code",
-        'start': 300,
-        'end': 600
-    },
-    {
-        'name': "P2:Data",
-        'start': 600,
-        'end': 685
-    },
-    {
-        'name': "P2:Data",
-        'start': 600,
-        'end': 685
-    },
-    {
-        'name': "Hole",
-        'start': 600,
-        'end': 685
-    },
-    {
-        'name': "P2:code",
-        'start': 300,
-        'end': 600
-    },
-    {
-        'name': "P2:Data",
-        'start': 600,
-        'end': 685
-    },
-    {
-        'name': "P2:Data",
-        'start': 600,
-        'end': 685
-    },
-    {
-        'name': "P2:Data",
-        'start': 900,
-        'end': 1250
-    }
-]
+from window_test import Ui_Window_test
 
 
-class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
+class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
     def __init__(self):
         super().__init__()
 
-        self.ui = Ui_Form()
+        self.ui = Ui_Window_test()
         self.ui.setupUi(self)
+        self.ui.size_doubleSpinBox.setMaximum(float('+inf'))
+        self.ui.size_doubleSpinBox.setDecimals(5)
+        self.ui.size_doubleSpinBox.clear()
+        self.holes = []
         self.process_index = 0
         self.algorithm = self.ui.algorithm
         self.ui.process_table.insertRow(self.ui.process_table.rowCount())
@@ -84,18 +32,53 @@ class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
         self.ui.allocate_button.clicked.connect(self._addNewProcess)
 
         # show mem
-        self.ui.memory_button.clicked.connect(self.openWindow)
+        # self.ui.memory_button.clicked.connect(self.openWindow)
 
         # deallocate
         self.ui.deallocate_button.clicked.connect(self._deallocate)
 
-    def openWindow(self):
-        self.window = qtw.QMainWindow()
-        self.ui = Ui_ChartWindow()
-        # should add myList = memoryMap()
-        self.ui.setupUi(self.window, myList)
-        self.window.show()
+        # button to add a hole
+        self.ui.add_hole_pushButton.clicked.connect(self.add_hole_row)
 
+        # button to delete the last row
+        self.ui.delete_hole_pushButton.clicked.connect(self.delete_hole_row)
+
+        # take mem size value
+        memory_size = self.ui.size_doubleSpinBox.value()
+
+        # button to add old processes
+        self.ui.add_old_processes_pushButton.clicked.connect(self.add_old_processes)
+
+    # salma's part
+    def add_hole_row(self):
+        self.ui.old_holes_tableWidget.insertRow(self.ui.old_holes_tableWidget.rowCount())
+
+    def delete_hole_row(self):
+        if self.ui.old_holes_tableWidget.rowCount() > 0:
+            self.ui.old_holes_tableWidget.removeRow(self.ui.old_holes_tableWidget.rowCount() - 1)
+        else:
+            qtw.QMessageBox.critical(self, 'fail', 'There is no hole to delete')
+
+    def add_old_processes(self):
+        try:
+            rowCount = self.ui.old_holes_tableWidget.rowCount()
+            memory_size = self.ui.size_doubleSpinBox.value()
+
+            for row in range(rowCount):
+                start_adrr = self.ui.old_holes_tableWidget.item(row, 0).text()
+                size = self.ui.old_holes_tableWidget.item(row, 1).text()
+                hole = [start_adrr, size]
+                self.holes.append(hole)
+                # send to back
+
+            qtw.QMessageBox.information(self, 'success', 'Holes are added sucessfully')
+            self.ui.add_old_processes_pushButton.setEnabled(False)
+            print(self.holes)
+            print(memory_size)
+        except:
+            qtw.QMessageBox.critical(self, 'fail', 'Something went wrong')
+
+    # mostafa's part
     def _addRow(self):
         no_of_segments = self.ui.number_of_segments.text()
         row_count = self.ui.process_table.rowCount()
@@ -114,7 +97,9 @@ class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
             qtw.QMessageBox.critical(self, 'fail', "all segments have been added")
 
     def _addNewProcess(self):
-        if int(self.ui.number_of_segments.text()) == 0:
+        if len(self.holes) <= 0:
+            qtw.QMessageBox.critical(self, 'warning', "please, add holes first")
+        elif int(self.ui.number_of_segments.text()) == 0:
             qtw.QMessageBox.critical(self, 'fail', "please, enter number of segments of this process")
         elif self.ui.process_table.rowCount() < int(self.ui.number_of_segments.text()):
             qtw.QMessageBox.critical(self, 'warning', "please, add all segments of this process")
@@ -156,13 +141,13 @@ class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
 if __name__ == "__main__":
     app = qtw.QApplication([])
     widget1 = qtw.QStackedWidget()
-    processes = ProcessMainWindow()
+    processes = TestMainWindow()
     deallocate = deallocateMainWindow()
     widget1.addWidget(processes)
     widget1.addWidget(deallocate)
     widget1.show()
     app.exec_()
     # app = qtw.QApplication([])
-    # widget = ProcessMainWindow()
+    # widget = TestMainWindow()
     # widget.show()
     # app.exec_()
