@@ -186,7 +186,7 @@ class Ui_Window_test(object):
         self.label_6.setObjectName("label_6")
 
         self.label_7 = QtWidgets.QLabel(self.centralwidget)
-        self.label_7.setGeometry(QtCore.QRect(1200, 10, 281, 51))
+        self.label_7.setGeometry(QtCore.QRect(1150, 10, 281, 51))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.label_7.setFont(font)
@@ -239,7 +239,7 @@ class Ui_Window_test(object):
         self.actionpaste.setObjectName("actionpaste")
 
         self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
-        self.scrollArea.setGeometry(QtCore.QRect(1200, 50, 221, 500))
+        self.scrollArea.setGeometry(QtCore.QRect(1150, 50, 221, 500))
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
