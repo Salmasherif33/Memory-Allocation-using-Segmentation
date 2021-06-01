@@ -112,6 +112,46 @@ class MemoryManager:
         return True
 
     def allocate_first_fit(self, n_p) -> bool:
+        for i in self.holes_size:
+            cup =Hole("",i[0],i[1]+i[0])
+            self.output_holes.append(cup.str())
+        
+        for p_num in n_p.segments:
+        
+            h_num =[]
+            for h_num in self.holes_size:  
+                if p_num['size']<= h_num[1]:
+                    self.new_processes.append({'name':f"p{n_p.index}:{p_num['name']}",'size':p_num['size'],'start':h_num[0],'end':p_num['size']+h_num[0] })
+                  
+                    h_num[1]= h_num[1]-p_num['size']
+                    h_num[0]=p_num['size']+h_num[0]
+                    self.flag =0
+                    
+                    break
+                
+                if p_num['size']> h_num[1] :
+                    
+                    self.flag =1
+            
+            if self.flag ==1:
+              
+                self.new_processes.clear()
+                break         
+        
+       
+
+        if self.flag == 1:
+            #print (self.new_processes)
+            #print (self.output_holes)
+            return False 
+        self.output_holes.clear()
+        for i in self.holes_size:
+            cup =Hole("",i[0],i[1]+i[0])
+            self.output_holes.append(cup.str())
+           
+        #print (self.new_processes)
+        #print (self.output_holes)
+
 
         return True
 
@@ -241,4 +281,4 @@ ayaa=Process(1,[{'name':"code", 'size': 50},{'name':"data", 'size': 300},{'name'
 s=[[0,200],[300,400],[900,60]]
 aya = MemoryManager(1000,s)
 
-a=aya.allocate_best_fit( ayaa)
+a=aya.allocate_first_fit( ayaa)
