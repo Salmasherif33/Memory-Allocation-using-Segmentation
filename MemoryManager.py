@@ -52,6 +52,7 @@ class MemoryManager:
         
     
         if self.flag == 1:
+            self.holes = self.output_holes 
             #print (self.new_processes)
             #print (self.output_holes)
             return False 
@@ -59,9 +60,9 @@ class MemoryManager:
         for i in self.holes_size:
             cup =Hole("",i[0],i[1]+i[0])
             self.output_holes.append(cup.str())
-           
+        self.holes = self.output_holes    
         #print (self.new_processes)
-        #print (self.output_holes)
+        #print (self.holes)
 
        
         return True
@@ -100,14 +101,15 @@ class MemoryManager:
         if self.flag == 1:
             #print (self.new_processes)
             #print (self.output_holes)
+            self.holes = self.output_holes 
             return False 
         self.output_holes.clear()
         for i in self.holes_size:
             cup =Hole("",i[0],i[1]+i[0])
             self.output_holes.append(cup.str())
-           
+        self.holes = self.output_holes 
         #print (self.new_processes)
-        #print (self.output_holes)
+        #print (self.holes)
 
         return True
 
@@ -143,14 +145,17 @@ class MemoryManager:
         if self.flag == 1:
             #print (self.new_processes)
             #print (self.output_holes)
+            self.holes = self.output_holes 
             return False 
+
         self.output_holes.clear()
         for i in self.holes_size:
             cup =Hole("",i[0],i[1]+i[0])
             self.output_holes.append(cup.str())
-           
+        self.holes = self.output_holes   
         #print (self.new_processes)
-        #print (self.output_holes)
+        #print (self.holes)
+        
 
 
         return True
@@ -281,4 +286,5 @@ ayaa=Process(1,[{'name':"code", 'size': 50},{'name':"data", 'size': 300},{'name'
 s=[[0,200],[300,400],[900,60]]
 aya = MemoryManager(1000,s)
 
-a=aya.allocate_first_fit( ayaa)
+a=aya.allocate_best_fit( ayaa)
+print(a)
