@@ -6,6 +6,8 @@ from typing import List
 
 OldProcess = namedtuple('OldProcess', ['name', 'start_address', 'end_address'])
 
+def sorting(x):
+    return(x[1])
 
 class MemoryManager:
     def __init__(self, total_memory_size, holes):
@@ -15,8 +17,53 @@ class MemoryManager:
         self.new_processes = []
         self.blocks = []
         self.is_compacted = False
+        self.flag=0
+        self.holes_size =holes
+        self.output_holes=[]   
 
-    def allocate_best_fit(self, new_process: Process) -> bool:
+    def allocate_best_fit(self, n_p) -> bool:
+         
+        self.holes_size.sort(key=sorting)
+        for i in self.holes_size:
+            cup =Hole("",i[0],i[1]+i[0])
+            self.output_holes.append(cup.str())
+        
+        for p_num in n_p.segments:
+        
+            h_num =[]
+            for h_num in self.holes_size:  
+                if p_num['size']<= h_num[1]:
+                    self.new_processes.append({'name':f"p{n_p.index}:{p_num['name']}",'size':p_num['size'],'start':h_num[0],'end':p_num['size']+h_num[0] })
+                  
+                    h_num[1]= h_num[1]-p_num['size']
+                    h_num[0]=p_num['size']+h_num[0]
+                    self.flag =0
+                    self.holes_size.sort(key=sorting)
+                    break
+                
+                if p_num['size']> h_num[1] :
+                    self.holes_size.sort(key=sorting)
+                    self.flag =1
+            
+            if self.flag ==1:
+              
+                self.new_processes.clear()
+                break         
+        
+    
+        if self.flag == 1:
+            #print (self.new_processes)
+            #print (self.output_holes)
+            return False 
+        self.output_holes.clear()
+        for i in self.holes_size:
+            cup =Hole("",i[0],i[1]+i[0])
+            self.output_holes.append(cup.str())
+           
+        #print (self.new_processes)
+        #print (self.output_holes)
+
+       
         return True
 
     def allocate_worst_fit(self, new_process: Process) -> bool:
@@ -142,3 +189,13 @@ memory.external_compaction()
 my_list = memory.get_memory_map()
 
 print(my_list)
+print('testing the algorithm')
+
+ayaa=Process(1,[{'name':"code", 'size': 50},{'name':"data", 'size': 300},{'name':"stack", 'size': 100},{'name':"stack", 'size': 100}])
+
+#p = Process(1,[{'name':"code", 'size': '100'},{'name':"data", 'size': '250'}])
+#s=([0,200],[300,500],[900,100])
+s=[[0,200],[300,400],[900,60]]
+aya = MemoryManager(1000,s)
+
+a=aya.allocate_best_fit( ayaa)

@@ -3,3 +3,5 @@ class Hole:
         self.name = name
         self.start_address = start_address
         self.end_address = end_address
+    def str(self):
+        return f"(name: {self.name}, start address: {self.start_address}, end address: {self.end_address})"
