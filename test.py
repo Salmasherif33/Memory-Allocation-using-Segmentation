@@ -227,18 +227,18 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
                 size = self.ui.old_holes_tableWidget.item(row, 1).text()
                 
                 if  start_adrr.isnumeric() == False or size.isnumeric() == False:
-                    qtw.QMessageBox.critical(self, 'fail', f'You have to add an intger value in row {row+1}')
+                    qtw.QMessageBox.critical(self, 'fail', f'You have to add an unsigned number value in row {row+1}')
                     self.holes = []
                     flag = 1 
                     return
-                # if size <=0 or start_adrr <=0:
-                #     qtw.QMessageBox.critical(self, 'fail', 'You have to add a number greater than 0')
-                #     # self.holes = []
-                #     # flag = 1 
-                #     # return
+                if int(size) <=0 or int(start_adrr) < 0:
+                    qtw.QMessageBox.critical(self, 'fail', 'You have to add a number greater than 0')
+                    self.holes = []
+                    flag = 1 
+                    return
 
                 else:
-                    hole = [start_adrr, size]
+                    hole = [int(start_adrr), float(size)]
                     self.holes.append(hole)
                 # send to back
             if len(self.holes) == 0 and flag == 0:
@@ -304,7 +304,7 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
                 list_of_segments.clear()
                 return
             
-            elif self.ui.process_table.item(seg_index, 1).text() <= 0:
+            elif int(self.ui.process_table.item(seg_index, 1).text()) <= 0:
                 qtw.QMessageBox.critical(self, 'fail', 'You have to add a number greater than 0')
                 list_of_segments.clear()
                 return
