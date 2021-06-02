@@ -2,10 +2,7 @@ import sys
 from PyQt5 import QtWidgets as qtw
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QDialog, QApplication
-from GUI_process import Ui_Form
 from deallocate import Ui_deallo
-from Plotting import Ui_ChartWindow
-from myDeallocate import deallocateMainWindow
 from window_test import Ui_Window_test
 
 before_first_num1 = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n""<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n""p, li { white-space: pre-wrap; }\n""</style></head><body"
@@ -46,7 +43,6 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
 
         self.ui = Ui_Window_test()
         self.ui.setupUi(self)
-
 
         self.ui.size_doubleSpinBox.setMaximum(float('+inf'))
         self.ui.size_doubleSpinBox.setDecimals(5)
@@ -94,6 +90,10 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
             myList[i]['end']) + ending))
 
     def showMemory(self):
+        if len(self.holes) == 0:
+            qtw.QMessageBox.critical(self, 'fail', "please,Fill the holes first")
+            return
+
         if self.index == 0:
             myList = [
             {
@@ -218,18 +218,36 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
         try:
             rowCount = self.ui.old_holes_tableWidget.rowCount()
             memory_size = self.ui.size_doubleSpinBox.value()
-
+            if(memory_size == 0):
+                qtw.QMessageBox.critical(self, 'fail', 'You have to add memory size')
+                return
+            flag = 0
             for row in range(rowCount):
                 start_adrr = self.ui.old_holes_tableWidget.item(row, 0).text()
                 size = self.ui.old_holes_tableWidget.item(row, 1).text()
-                hole = [start_adrr, size]
-                self.holes.append(hole)
-                # send to back
+                
+                if  start_adrr.isnumeric() == False or size.isnumeric() == False:
+                    qtw.QMessageBox.critical(self, 'fail', f'You have to add an intger value in row {row+1}')
+                    self.holes = []
+                    flag = 1 
+                    return
+                elif size <=0 or start_adrr <=0:
+                    qtw.QMessageBox.critical(self, 'fail', 'You have to add a number greater than 0')
+                    self.holes = []
+                    flag = 1 
+                    return
 
-            qtw.QMessageBox.information(self, 'success', 'Holes are added sucessfully')
-            self.ui.add_old_processes_pushButton.setEnabled(False)
-            print(self.holes)
-            print(memory_size)
+                else:
+                    hole = [start_adrr, size]
+                    self.holes.append(hole)
+                # send to back
+            if len(self.holes) == 0 and flag == 0:
+                qtw.QMessageBox.critical(self, 'fail', 'You have to add holes to add processes')
+            else:
+                qtw.QMessageBox.information(self, 'success', 'Holes are added sucessfully')
+                self.ui.add_old_processes_pushButton.setEnabled(False)
+                print(self.holes)
+                print(memory_size)
         except:
             qtw.QMessageBox.critical(self, 'fail', 'Something went wrong')
 
@@ -281,11 +299,27 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
         number_of_dictionaries = int(self.ui.number_of_segments.text())
         list_of_segments = [dict() for number in range(number_of_dictionaries)]
         for seg_index in range(number_of_dictionaries):
+            if self.ui.process_table.item(seg_index, 1).text().isnumeric() == False:
+                qtw.QMessageBox.critical(self, 'fail', f'You have to add an intger value in row {seg_index+1}')
+                list_of_segments.clear()
+                return
+            
+            elif self.ui.process_table.item(seg_index, 1).text() <= 0:
+                qtw.QMessageBox.critical(self, 'fail', 'You have to add a number greater than 0')
+                list_of_segments.clear()
+                return
+            
             list_of_segments[seg_index]['name'] = self.ui.process_table.item(seg_index, 0).text()
             list_of_segments[seg_index]['size'] = int(self.ui.process_table.item(seg_index, 1).text())
+            
+        qtw.QMessageBox.information(self, 'success', 'Process is added sucessfully')
+
         return list_of_segments
 
     def _deallocate(self):
+        if len(self.holes) == 0 and self.process_index == 0:
+            qtw.QMessageBox.critical(self, 'fail', 'you have to add holes or processses first')
+            return
         dea = deallocateMainWindow()
         widget1.addWidget(dea)
         widget1.setCurrentIndex(widget1.currentIndex() + 1)
