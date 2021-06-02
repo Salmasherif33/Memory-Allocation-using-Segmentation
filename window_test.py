@@ -248,6 +248,39 @@ class Ui_Window_test(object):
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
 
+        ########################################
+        self.gridLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(870, 400, 171, 111))
+        self.gridLayoutWidget.setObjectName("gridLayoutWidget")
+        self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout.setObjectName("gridLayout")
+        self.textBrowser_100 = QtWidgets.QTextBrowser(self.gridLayoutWidget)
+        self.textBrowser_100.setObjectName("textBrowser_100")
+        self.gridLayout.addWidget(self.textBrowser_100, 0, 1, 1, 1)
+        self.label_100 = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.label_100.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";")
+        self.label_100.setObjectName("label_100")
+        self.gridLayout.addWidget(self.label_100, 0, 0, 1, 1, QtCore.Qt.AlignHCenter)
+        self.label_111 = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.label_111.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";")
+        self.label_111.setObjectName("label_111")
+        self.gridLayout.addWidget(self.label_111, 1, 0, 1, 1, QtCore.Qt.AlignHCenter)
+        self.textBrowser_111 = QtWidgets.QTextBrowser(self.gridLayoutWidget)
+        self.textBrowser_111.setObjectName("textBrowser_111")
+        self.gridLayout.addWidget(self.textBrowser_111, 1, 1, 1, 1)
+        self.textBrowser_122 = QtWidgets.QTextBrowser(self.gridLayoutWidget)
+        self.textBrowser_122.setObjectName("textBrowser_122")
+        self.gridLayout.addWidget(self.textBrowser_122, 2, 1, 1, 1)
+        self.label_122 = QtWidgets.QLabel(self.gridLayoutWidget)
+        self.label_122.setStyleSheet("font: 12pt \"MS Shell Dlg 2\";")
+        self.label_122.setObjectName("label_122")
+        self.gridLayout.addWidget(self.label_122, 2, 0, 1, 1)
+        Window_test.setCentralWidget(self.centralwidget)
+        
+        ########################################
+
+        
         # start = 0
         # for i in range(0,len(myList)):
         #     text = str(i)
@@ -306,6 +339,27 @@ class Ui_Window_test(object):
         self.actionsave.setText(_translate("Window_test", "save"))
         self.actioncopy.setText(_translate("Window_test", "copy"))
         self.actionpaste.setText(_translate("Window_test", "paste"))
+
+        #Guide table part
+        self.textBrowser_100.setHtml(_translate("Window_test", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:7.8pt; font-weight:400; font-style:normal;\" bgcolor=\"#00acff\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+        self.label_100.setText(_translate("Window_test", "New Pro"))
+        self.label_111.setText(_translate("Window_test", "Hole"))
+        self.textBrowser_111.setHtml(_translate("", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:7.8pt; font-weight:400; font-style:normal;\" bgcolor=\"#fa669a\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+        self.textBrowser_122.setHtml(_translate("Window_test", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:7.8pt; font-weight:400; font-style:normal;\" bgcolor=\"#e3f55a\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"))
+        self.label_122.setText(_translate("Window_test", "Old Pro"))
+
 
     # def retranslateUiDraw(self, ChartWindow, text, i, length, myList, color):
     #     _translate = QtCore.QCoreApplication.translate
