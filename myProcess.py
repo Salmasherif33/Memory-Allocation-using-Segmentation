@@ -4,64 +4,65 @@ from PyQt5.QtWidgets import QDialog, QApplication
 from GUI_process import Ui_Form
 from Process import Process
 from Plotting import Ui_ChartWindow
-
+from myDeallocate import deallocateMainWindow
 myList = [
-            {
-                'name': "P1:code",
-                'start': 0,
-                'end': 70
-            },
-            {
-                'name': "hole1",
-                'start': 70,
-                'end': 150
-            },
-            {
-                'name': "P2:Data",
-                'start': 150,
-                'end': 300
-            },
-            {
-                'name': "P2:code",
-                'start': 300,
-                'end': 600
-            },
-            {
-                'name': "P2:Data",
-                'start': 600,
-                'end': 685
-            },
-            {
-                'name': "P2:Data",
-                'start': 600,
-                'end': 685
-            },
-            {
-                'name': "Hole",
-                'start': 600,
-                'end': 685
-            },
-            {
-                'name': "P2:code",
-                'start': 300,
-                'end': 600
-            },
-            {
-                'name': "P2:Data",
-                'start': 600,
-                'end': 685
-            },
-            {
-                'name': "P2:Data",
-                'start': 600,
-                'end': 685
-            },
-            {
-                'name': "P2:Data",
-                'start': 900,
-                'end': 1250
-            }
-        ]
+    {
+        'name': "P1:code",
+        'start': 0,
+        'end': 70
+    },
+    {
+        'name': "hole1",
+        'start': 70,
+        'end': 150
+    },
+    {
+        'name': "P2:Data",
+        'start': 150,
+        'end': 300
+    },
+    {
+        'name': "P2:code",
+        'start': 300,
+        'end': 600
+    },
+    {
+        'name': "P2:Data",
+        'start': 600,
+        'end': 685
+    },
+    {
+        'name': "P2:Data",
+        'start': 600,
+        'end': 685
+    },
+    {
+        'name': "Hole",
+        'start': 600,
+        'end': 685
+    },
+    {
+        'name': "P2:code",
+        'start': 300,
+        'end': 600
+    },
+    {
+        'name': "P2:Data",
+        'start': 600,
+        'end': 685
+    },
+    {
+        'name': "P2:Data",
+        'start': 600,
+        'end': 685
+    },
+    {
+        'name': "P2:Data",
+        'start': 900,
+        'end': 1250
+    }
+]
+
 
 class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
     def __init__(self):
@@ -72,7 +73,7 @@ class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
         self.process_index = 0
         self.algorithm = self.ui.algorithm
         self.ui.process_table.insertRow(self.ui.process_table.rowCount())
-        
+
         # add segment to process_table
         self.ui.add_segment_button.clicked.connect(self._addRow)
 
@@ -85,11 +86,14 @@ class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
         # show mem
         self.ui.memory_button.clicked.connect(self.openWindow)
 
+        # deallocate
+        self.ui.deallocate_button.clicked.connect(self._deallocate)
+
     def openWindow(self):
         self.window = qtw.QMainWindow()
         self.ui = Ui_ChartWindow()
-        #should add myList = memoryMap()
-        self.ui.setupUi(self.window,myList)
+        # should add myList = memoryMap()
+        self.ui.setupUi(self.window, myList)
         self.window.show()
 
     def _addRow(self):
@@ -139,24 +143,26 @@ class ProcessMainWindow(qtw.QMainWindow, Ui_Form):
             list_of_segments[seg_index]['size'] = int(self.ui.process_table.item(seg_index, 1).text())
         return list_of_segments
 
-    #def _toMem(self):
-    #show mem
-    #def allocate_to_mem(self):
-    #functions from backend
-
+    def _deallocate(self):
+        dea = deallocateMainWindow()
+        widget1.addWidget(dea)
+        widget1.setCurrentIndex(widget1.currentIndex() + 1)
+    # def _toMem(self):
+    # show mem
+    # def allocate_to_mem(self):
+    # functions from backend
 
 
 if __name__ == "__main__":
+    app = qtw.QApplication([])
+    widget1 = qtw.QStackedWidget()
+    processes = ProcessMainWindow()
+    deallocate = deallocateMainWindow()
+    widget1.addWidget(processes)
+    widget1.addWidget(deallocate)
+    widget1.show()
+    app.exec_()
     # app = qtw.QApplication([])
-    # widget = qtw.QStackedWidget()
-    # mainWindow = Inputs()
-    # processes = ProcessMainWindow()
-    # widget.addWidget(mainWindow)
-    # widget.addWidget(processes)
+    # widget = ProcessMainWindow()
     # widget.show()
     # app.exec_()
-
-    app = qtw.QApplication([])
-    widget = ProcessMainWindow()
-    widget.show()
-    app.exec_()

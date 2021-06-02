@@ -66,6 +66,15 @@ class Inputs(qtw.QMainWindow, Ui_InputWindow):
                 print(holes)
                 print(memory_size)
                 widget.setCurrentIndex(widget.currentIndex()+1)
+                hole = [start_adrr, size]
+                holes.append(hole)
+
+            qtw.QMessageBox.information(self, 'success', 'Holes are added sucessfully')
+            print(holes)
+            print(memory_size)
+            p_main_window = ProcessMainWindow()
+            widget.addWidget(p_main_window)
+            widget.setCurrentIndex(widget.currentIndex()+1)
         except:
             qtw.QMessageBox.critical(self, 'fail', 'Something went wrong')
 
