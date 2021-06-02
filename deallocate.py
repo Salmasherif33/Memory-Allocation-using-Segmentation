@@ -104,13 +104,7 @@ class Ui_deallo(object):
         font.setPointSize(10)
         self.back_button.setFont(font)
         self.back_button.setObjectName("back_button")
-        self.show_mem2 = QtWidgets.QPushButton(deallo)
-        self.show_mem2.setGeometry(QtCore.QRect(390, 600, 121, 51))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.show_mem2.setFont(font)
-        self.show_mem2.setObjectName("show_mem2")
-
+        
         self.retranslateUi(deallo)
         QtCore.QMetaObject.connectSlotsByName(deallo)
 
@@ -133,7 +127,6 @@ class Ui_deallo(object):
         self.label_3.setText(_translate("deallo", "Select only one process to deallocate"))
         self.deallocate_new_button.setText(_translate("deallo", "Deallocate added process"))
         self.back_button.setText(_translate("deallo", "Back to allocate"))
-        self.show_mem2.setText(_translate("deallo", "Show memory"))
 
 
 if __name__ == "__main__":
