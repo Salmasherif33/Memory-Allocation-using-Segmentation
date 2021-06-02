@@ -1,307 +1,230 @@
-from Process import Process
-from Hole import Hole
 from Block import Block
-from collections import namedtuple
 from typing import List
 
-OldProcess = namedtuple('OldProcess', ['name', 'start_address', 'end_address'])
-
-def sorting(x):
-    return(x[1])
+import copy
 
 
 class MemoryManager:
     def __init__(self, total_memory_size, holes):
         self.total_memory_size = total_memory_size
-        self.holes = list(map(lambda hole: Hole('Hole', hole[0], hole[0] + hole[1]), holes))
+        self.holes = list(map(lambda hole: Block('Hole', hole[0], hole[1]), holes))
         self.old_processes = self._deduce_old_processes()
         self.new_processes = []
-        self.blocks = []
-        self.is_compacted = False
 
     def allocate_best_fit(self, new_process) -> bool:
-        flag = 0
-        segments = []
-        holes_size = []
-        for hole in self.holes:
-            holes_size.append([hole.start_address, hole.end_address - hole.start_address])
-
-        holes_size.sort(key=sorting)
+        # perform deep copy to not corrupt original holes
+        holes_copy = copy.deepcopy(self.holes)
 
         for segment in new_process.segments:
-            h_num = []
-            for h_num in holes_size:
-                if segment['size'] <= h_num[1]:
-                    segments.append({
-                        'name': f"{segment['name']}",
-                        'size': segment['size'],
-                        'start_address': h_num[0],
-                        'end_address': segment['size'] + h_num[0]
-                    })
+            # remove holes that its size smaller than segment size
+            filtered_holes = list(filter(lambda hole: hole.size >= segment.size, holes_copy))
 
-                    h_num[1] = h_num[1] - segment['size']
-                    h_num[0] = segment['size'] + h_num[0]
-                    flag = 0
-                    holes_size.sort(key=sorting)
-                    break
+            # if there no holes that can fit the segment, then we can't allocate the whole process
+            if len(filtered_holes) == 0:
+                return False
 
-                if segment['size'] > h_num[1]:
-                    holes_size.sort(key=sorting)
-                    flag = 1
+            # best hole is the smallest size
+            best_hole = min(filtered_holes, key=lambda hole: hole.size)
+            holes_copy.remove(best_hole)
 
-            if flag == 1:
-                break
+            self._bind_address_to_segment(segment, best_hole, holes_copy)
 
-        if flag == 1:
-            return False
-        self.new_processes.append(Process(len(self.new_processes), segments))
-        self.holes.clear()
-        for i in holes_size:
-            cup = Hole("", i[0], i[1] + i[0])
-            if cup.start_address != cup.end_address:
-                self.holes.append(cup)
+        # allocation succeeded
+        self.new_processes.append(new_process)
+        self.holes = holes_copy
         return True
 
     def allocate_worst_fit(self, new_process) -> bool:
-        flag = 0
-        segments = []
-        holes_size = []
-        for hole in self.holes:
-            holes_size.append([hole.start_address, hole.end_address - hole.start_address])
+        # perform deep copy to not corrupt original holes
+        holes_copy = copy.deepcopy(self.holes)
 
-        holes_size.sort(key=sorting, reverse=True)
-        
         for segment in new_process.segments:
-        
-            h_num = []
-            for h_num in holes_size:
-                if segment['size'] <= h_num[1]:
-                    segments.append(
-                        {'name': f"{segment['name']}",
-                         'size': segment['size'],
-                         'start_address': h_num[0],
-                         'end_address': segment['size'] + h_num[0]})
-                  
-                    h_num[1] = h_num[1]-segment['size']
-                    h_num[0] = segment['size']+h_num[0]
-                    flag = 0
-                    holes_size.sort(key=sorting, reverse=True)
-                    break
-                
-                if segment['size'] > h_num[1]:
-                    holes_size.sort(key=sorting, reverse=True)
-                    flag = 1
-            
-            if flag == 1:
-                break         
+            # worst hole is the largest whole
+            worst_hole = max(holes_copy, key=lambda hole: hole.size)
+            holes_copy.remove(worst_hole)
 
-        if flag == 1:
-            return False
-        self.new_processes.append(Process(len(self.new_processes), segments))
-        self.holes.clear()
-        for i in holes_size:
-            cup = Hole("", i[0], i[1]+i[0])
-            if cup.start_address != cup.end_address:
-                self.holes.append(cup)
+            # if the largest hole can't fit the segment then we can't allocate the process
+            if worst_hole.size < segment.size:
+                return False
 
+            self._bind_address_to_segment(segment, worst_hole, holes_copy)
+
+        # allocation succeeded
+        self.new_processes.append(new_process)
+        self.holes = holes_copy
         return True
 
     def allocate_first_fit(self, new_process) -> bool:
-        flag = 0
-        segments = []
-        holes_size = []
+        # perform deep copy to not corrupt original holes
+        holes_copy = copy.deepcopy(self.holes)
 
-        for hole in self.holes:
-            holes_size.append([hole.start_address, hole.end_address - hole.start_address])
-        
         for segment in new_process.segments:
-        
-            h_num = []
-            for h_num in holes_size:
-                if segment['size'] <= h_num[1]:
-                    segments.append({
-                        'name': f"{segment['name']}",
-                        'size': segment['size'],
-                        'start_address': h_num[0],
-                        'end_address': segment['size'] + h_num[0]
-                    })
+            # remove holes that its size smaller than segment size
+            filtered_holes = list(filter(lambda hole: hole.size >= segment.size, holes_copy))
 
-                    h_num[1] = h_num[1]-segment['size']
-                    h_num[0] = segment['size']+h_num[0]
-                    flag = 0
-                    break
-                
-                if segment['size'] > h_num[1]:
-                    flag = 1
-            
-            if flag == 1:
-                break         
+            # if there no holes that can fit the segment, then we can't allocate the whole process
+            if len(filtered_holes) == 0:
+                return False
 
-        if flag == 1:
-            return False
+            # get first hole
+            first_hole = min(filtered_holes, key=lambda hole: hole.start_address)
+            holes_copy.remove(first_hole)
 
-        self.new_processes.append(Process(len(self.new_processes), segments))
-        self.holes.clear()
-        for i in holes_size:
-            cup = Hole("", i[0], i[1]+i[0])
-            if cup.start_address != cup.end_address:
-                self.holes.append(cup)
+            self._bind_address_to_segment(segment, first_hole, holes_copy)
 
+        # allocation succeeded
+        self.new_processes.append(new_process)
+        self.holes = holes_copy
         return True
 
     def get_memory_map(self) -> List[dict]:
-        if not self.is_compacted:
-            self.holes.sort(key=lambda hole: hole.start_address)
-            for i, hole in enumerate(self.holes):
-                hole.name = f"Hole{i}"
-            segments = []
-            for my_process in self.new_processes:
-                segments += my_process.get_segments()
-            self.blocks = self.holes + self.old_processes + segments
-        self.blocks.sort(key=lambda block: block.start_address)
+        self.holes.sort(key=lambda hole: hole.start_address)
+        for i, mem_hole in enumerate(self.holes):
+            mem_hole.name = f"Hole{i}"
+
+        all_segments = self._get_all_processes_segments()
+
+        blocks = self.holes + self.old_processes + all_segments
+        blocks.sort(key=lambda block: block.start_address)
         return list(map(lambda block: {
             'name': block.name,
             'start': block.start_address,
             'end': block.end_address
-        }, self.blocks))
+        }, blocks))
 
     def external_compaction(self):
-        self.blocks = []
-        segments = []
-        for my_process in self.new_processes:
-            segments += my_process.get_segments()
-        for segment in segments:
-            temp_block = Block(segment.name, segment.start_address, segment.end_address)
-            self.blocks.append(temp_block)
-        for my_process in self.old_processes:
-            temp_block = Block(my_process.name, my_process.start_address, my_process.end_address)
-            self.blocks.append(temp_block)
+        all_segments = self._get_all_processes_segments()
 
-        self.blocks.sort(key=lambda block: block.start_address)
+        blocks = all_segments + self.old_processes
+        blocks.sort(key=lambda block: block.start_address)
 
-        for i, block in enumerate(self.blocks):
-            if i > 0 and i + 1 < len(self.blocks):
-                temp = self.blocks[i+1].start_address
-                self.blocks[i+1].start_address = block.end_address
-                self.blocks[i+1].end_address = self.blocks[i+1].start_address + (self.blocks[i+1].end_address - temp)
-        hole = Hole('Hole0', self.blocks[len(self.blocks)-1].end_address, self.total_memory_size)
+        current_position = 0
+        for mem_block in blocks:
+            mem_block.start_address = current_position
+            current_position = mem_block.end_address
+
+        hole = Block('Hole', blocks[-1].end_address, self.total_memory_size - blocks[-1].end_address)
         self.holes = [hole]
-        self.blocks += self.holes
-        self.is_compacted = True
-        pass
 
     def get_new_processes(self):
-        return list(map(lambda my_process: {
-            'name': f"P{my_process.index}",
-            'number of segments': len(my_process.segments),
+        return list(map(lambda process: {
+            'name': f"P{process.index}",
+            'number of segments': len(process.segments),
         }, self.new_processes))
 
     def get_old_processes(self):
-        if self.is_compacted:
-            result = []
-            for block in self.blocks:
-                if block.name[0] == "O":
-                    result.append({
-                        'name': block.name,
-                        'start address': block.start_address,
-                        'size': block.end_address - block.start_address
-                    })
-            return result
-
-        return list(map(lambda my_process: {
-            'name': my_process.name,
-            'start address': my_process.start_address,
-            'size': my_process.end_address - my_process.start_address
+        return list(map(lambda process: {
+            'name': process.name,
+            'start address': process.start_address,
+            'size': process.size
         }, self.old_processes))
 
-    def _deduce_old_processes(self) -> List[OldProcess]:
+    def _deduce_old_processes(self) -> List[Block]:
         # handle corner case when there are no holes
         if len(self.holes) == 0:
-            return [OldProcess('Old0', 0, self.total_memory_size)]
+            return [Block('Old0', 0, self.total_memory_size)]
 
         old_processes = []
         index = 0
         current_position = 0
 
         # get old processes between every two consequent holes and between memory start address (0) and first hole
-        for hole in sorted(self.holes, key=lambda hole: hole.start_address):
-            if hole.start_address > current_position:
-                old_processes.append(OldProcess(f"Old{index}", current_position, hole.start_address))
+        self.holes.sort(key=lambda hole: hole.start_address)
+        for mem_hole in self.holes:
+            if mem_hole.start_address > current_position:
+                old_processes.append(Block(f"Old{index}", current_position, mem_hole.start_address - current_position))
                 index += 1
-            current_position = hole.end_address
+            current_position = mem_hole.end_address
 
         # get the old process between last hole and memory end address (total_memory size), if any
         last_hole = self.holes[-1]
         if last_hole.end_address < self.total_memory_size:
-            old_processes.append(OldProcess(f"Old{index}", last_hole.end_address, self.total_memory_size))
+            old_processes.append(Block(f"Old{index}", last_hole.end_address,
+                                       self.total_memory_size - last_hole.end_address))
 
         return old_processes
 
+    def _get_all_processes_segments(self):
+        segments = []
+        for process in self.new_processes:
+            segments += process.segments
 
-memory = MemoryManager(500, [[20, 40], [80, 80], [200, 200], [450, 30]])
+        return segments
 
-for process in memory.old_processes:
-    print(f"{process.start_address} => {process.end_address}")
+    @staticmethod
+    def _bind_address_to_segment(segment, hole, holes):
+        segment.start_address = hole.start_address
+        new_hole_size = hole.end_address - segment.end_address
+        if new_hole_size > 0:
+            holes.append(Block('Hole', segment.end_address, new_hole_size))
 
-process = Process(1, [{
-        'name': 'code',
-        'size': 20,
-        'start_address': 20,
-        'end_address': 40
-    },
-     {
-         'name': 'Data',
-         'size': 80,
-         'start_address': 80,
-         'end_address': 160
-     }])
-process2 = Process(2, [{
-        'name': 'code',
-        'size': 20,
-        'start_address': 200,
-        'end_address': 220
-    },
-     {
-         'name': 'Data',
-         'size': 80,
-         'start_address': 240,
-         'end_address': 320
-     }])
 
-memory.new_processes.append(process)
-memory.new_processes.append(process2)
-
-memory.external_compaction()
-
-process3 = Process(3, [{
-        'name': 'code',
-        'size': 10,
-        'start_address': 450,
-        'end_address': 460
-    },
-     {
-         'name': 'Data',
-         'size': 10,
-         'start_address': 470,
-         'end_address': 480
-     }])
-
-memory.new_processes.append(process3)
-memory.external_compaction()
-my_list = memory.get_old_processes()
-
-print(my_list)
-print('testing the algorithm')
-
-ayaa = Process(1, [{'name': "code", 'size': 50}, {'name': "data", 'size': 300}, {'name': "stack", 'size': 100}, {'name': "stack", 'size': 100}])
-
-#p = Process(1,[{'name':"code", 'size': '100'},{'name':"data", 'size': '250'}])
-#s=([0,200],[300,500],[900,100])
-
-s = [[0, 200], [300, 400], [900, 60]]
-aya = MemoryManager(1000, s)
-
-a = aya.allocate_worst_fit(ayaa)
-antrawy = aya.get_memory_map()
-print(antrawy)
-
+# memory = MemoryManager(500, [[20, 40], [80, 80], [200, 200], [450, 30]])
+#
+# for process in memory.old_processes:
+#     print(f"{process.start_address} => {process.end_address}")
+#
+# process = Process(1, [{
+#         'name': 'code',
+#         'size': 20,
+#         'start_address': 20,
+#         'end_address': 40
+#     },
+#      {
+#          'name': 'Data',
+#          'size': 80,
+#          'start_address': 80,
+#          'end_address': 160
+#      }])
+# process2 = Process(2, [{
+#         'name': 'code',
+#         'size': 20,
+#         'start_address': 200,
+#         'end_address': 220
+#     },
+#      {
+#          'name': 'Data',
+#          'size': 80,
+#          'start_address': 240,
+#          'end_address': 320
+#      }])
+#
+# memory.new_processes.append(process)
+# memory.new_processes.append(process2)
+#
+# memory.external_compaction()
+#
+# process3 = Process(3, [{
+#         'name': 'code',
+#         'size': 10,
+#         'start_address': 450,
+#         'end_address': 460
+#     },
+#      {
+#          'name': 'Data',
+#          'size': 10,
+#          'start_address': 470,
+#          'end_address': 480
+#      }])
+#
+# memory.new_processes.append(process3)
+# memory.external_compaction()
+# my_list = memory.get_old_processes()
+#
+# print(my_list)
+# print('testing the algorithm')
+#
+# ayaa = Process(1, [{'name': "code", 'size': 50}, {'name': "data", 'size': 300},
+# {'name': "stack", 'size': 100}, {'name': "stack", 'size': 100}])
+#
+# #p = Process(1,[{'name':"code", 'size': '100'},{'name':"data", 'size': '250'}])
+# #s=([0,200],[300,500],[900,100])
+#
+# s = [[0, 200], [300, 400], [900, 60]]
+# aya = MemoryManager(1000, s)
+#
+# a = aya.allocate_worst_fit(ayaa)
+# antrawy = aya.get_memory_map()
+# print(antrawy)
+#
+#
