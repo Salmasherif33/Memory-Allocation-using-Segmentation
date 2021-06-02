@@ -231,11 +231,11 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
                     self.holes = []
                     flag = 1 
                     return
-                elif size <=0 or start_adrr <=0:
-                    qtw.QMessageBox.critical(self, 'fail', 'You have to add a number greater than 0')
-                    self.holes = []
-                    flag = 1 
-                    return
+                # if size <=0 or start_adrr <=0:
+                #     qtw.QMessageBox.critical(self, 'fail', 'You have to add a number greater than 0')
+                #     # self.holes = []
+                #     # flag = 1 
+                #     # return
 
                 else:
                     hole = [start_adrr, size]
