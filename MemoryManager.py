@@ -10,13 +10,14 @@ class MemoryManager:
         self.holes = list(map(lambda hole: Block('Hole', hole[0], hole[1]), holes))
         self.old_processes = self._deduce_old_processes()
         self.new_processes = []
+        self._update_holes()
 
     def allocate_best_fit(self, new_process) -> bool:
         # perform deep copy to not corrupt original holes
         holes_copy = copy.deepcopy(self.holes)
 
         for segment in new_process.segments:
-            # remove holes that its size smaller than segment size
+            # remove holes that its size smaller than segment sizenew_processes
             filtered_holes = list(filter(lambda hole: hole.size >= segment.size, holes_copy))
 
             # if there no holes that can fit the segment, then we can't allocate the whole process
@@ -122,12 +123,15 @@ class MemoryManager:
     def deallocate(self, block_name):
         # try to find the block in all new processes
         for process in self.new_processes:
-            if process.remove_segment(block_name):
+            if process.name == block_name:
+                self.new_processes.remove(process)
+                self._update_holes()
                 return
 
         # then it must be in old processes
         process_found = list(filter(lambda block: block.name == block_name, self.old_processes))[0]
         self.old_processes.remove(process_found)
+        self._update_holes()
 
     def _deduce_old_processes(self) -> List[Block]:
         # handle corner case when there are no holes
@@ -168,73 +172,20 @@ class MemoryManager:
         if new_hole_size > 0:
             holes.append(Block('Hole', segment.end_address, new_hole_size))
 
+    def _update_holes(self):
+        all_processes = self._get_all_processes_segments() + self.old_processes
+        all_processes.sort(key=lambda segment: segment.start_address)
 
-# memory = MemoryManager(500, [[20, 40], [80, 80], [200, 200], [450, 30]])
-#
-# for process in memory.old_processes:
-#     print(f"{process.start_address} => {process.end_address}")
-#
-# process = Process(1, [{
-#         'name': 'code',
-#         'size': 20,
-#         'start_address': 20,
-#         'end_address': 40
-#     },
-#      {
-#          'name': 'Data',
-#          'size': 80,
-#          'start_address': 80,
-#          'end_address': 160
-#      }])
-# process2 = Process(2, [{
-#         'name': 'code',
-#         'size': 20,
-#         'start_address': 200,
-#         'end_address': 220
-#     },
-#      {
-#          'name': 'Data',
-#          'size': 80,
-#          'start_address': 240,
-#          'end_address': 320
-#      }])
-#
-# memory.new_processes.append(process)
-# memory.new_processes.append(process2)
-#
-# memory.external_compaction()
-#
-# process3 = Process(3, [{
-#         'name': 'code',
-#         'size': 10,
-#         'start_address': 450,
-#         'end_address': 460
-#     },
-#      {
-#          'name': 'Data',
-#          'size': 10,
-#          'start_address': 470,
-#          'end_address': 480
-#      }])
-#
-# memory.new_processes.append(process3)
-# memory.external_compaction()
-# my_list = memory.get_old_processes()
-#
-# print(my_list)
-# print('testing the algorithm')
-#
-# ayaa = Process(1, [{'name': "code", 'size': 50}, {'name': "data", 'size': 300},
-# {'name': "stack", 'size': 100}, {'name': "stack", 'size': 100}])
-#
-# #p = Process(1,[{'name':"code", 'size': '100'},{'name':"data", 'size': '250'}])
-# #s=([0,200],[300,500],[900,100])
-#
-# s = [[0, 200], [300, 400], [900, 60]]
-# aya = MemoryManager(1000, s)
-#
-# a = aya.allocate_worst_fit(ayaa)
-# antrawy = aya.get_memory_map()
-# print(antrawy)
-#
-#
+        current_position = 0
+        holes = []
+
+        for process in all_processes:
+            if process.start_address > current_position:
+                holes.append(Block(f"Hole", current_position, process.start_address - current_position))
+            current_position = process.end_address
+
+        last_process = all_processes[-1]
+        if last_process.end_address < self.total_memory_size:
+            holes.append(Block(f"Hole", last_process.end_address, self.total_memory_size - last_process.end_address))
+
+        self.holes = holes
