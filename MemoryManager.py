@@ -119,6 +119,16 @@ class MemoryManager:
             'size': process.size
         }, self.old_processes))
 
+    def deallocate(self, block_name):
+        # try to find the block in all new processes
+        for process in self.new_processes:
+            if process.remove_segment(block_name):
+                return
+
+        # then it must be in old processes
+        process_found = list(filter(lambda block: block.name == block_name, self.old_processes))[0]
+        self.old_processes.remove(process_found)
+
     def _deduce_old_processes(self) -> List[Block]:
         # handle corner case when there are no holes
         if len(self.holes) == 0:
