@@ -4,7 +4,8 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import QDialog, QApplication
 from deallocate import Ui_deallo
 from Basic_UI import Ui_Window_test
-
+from MemoryManager import MemoryManager
+from Process import Process
 before_first_num1 = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n""<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n""p, li { white-space: pre-wrap; }\n""</style></head><body"
 new_process = " bgcolor=\"#00acff\" "
 hole = " bgcolor=\"#FA669A\" "
@@ -36,6 +37,7 @@ new_dummy = [
     },
 ]
 
+memory_manager = None
 class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
 
     def __init__(self):
@@ -270,6 +272,7 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
             qtw.QMessageBox.critical(self, 'fail', "all segments have been added")
 
     def _addNewProcess(self):
+        is_added = false
         if self.ui.number_of_segments.text() == '':
             qtw.QMessageBox.critical(self, 'fail', "please, enter number of segments of this process")
         elif len(self.holes) <= 0:
@@ -280,11 +283,20 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
             qtw.QMessageBox.critical(self, 'warning', "please, add all segments of this process")
         else:
             self.ui.algorithm.setEnabled(False)  # disable comboBox
-            p = self.createSegments()
-            print(p)
+            segments = self.createSegments()
+            print(segments)
+            new_pro = process(self.process_index, segments)
             self.process_index += 1
             print(self.process_index)
             self.clearScreen()
+            if string(self.ui.algorithm.text()).lower == "best fit":
+                is_added = memory_manager.allocate_best_fit(new_pro)
+            elif string(self.ui.algorithm.text()).lower == "first fit":
+                is_added = memory_manager.allocate_firt_fit(new_pro)
+            elif string(self.ui.algorithm.text()).lower == "worst fit":
+                is_added = memory_manager.allocate_worst_fit(new_pro)
+            if not is_added:
+                qtw.QMessageBox.critical(self, 'warning', "ERROR! Process has not been added")
 
     def clearScreen(self):
         no_of_segments = self.ui.number_of_segments.text()
@@ -299,8 +311,8 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
         number_of_dictionaries = int(self.ui.number_of_segments.text())
         list_of_segments = [dict() for number in range(number_of_dictionaries)]
         for seg_index in range(number_of_dictionaries):
-            if self.ui.process_table.item(seg_index, 1).text().isnumeric() == False:
-                qtw.QMessageBox.critical(self, 'fail', f'You have to add an intger value in row {seg_index+1}')
+            if not self.ui.process_table.item(seg_index, 1).text().isnumeric():
+                qtw.QMessageBox.critical(self, 'fail', f'You have to add an integer value in row {seg_index+1}')
                 list_of_segments.clear()
                 return
             
