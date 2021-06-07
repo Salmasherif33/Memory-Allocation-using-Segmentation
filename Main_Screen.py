@@ -118,6 +118,7 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
         try:
             rowCount = self.ui.old_holes_tableWidget.rowCount()
             memory_size = self.ui.size_doubleSpinBox.value()
+            sizes = 0
             if (memory_size == 0):
                 qtw.QMessageBox.critical(self, 'fail', 'You have to add memory size')
                 return
@@ -125,7 +126,8 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
             for row in range(rowCount):
                 start_adrr = self.ui.old_holes_tableWidget.item(row, 0).text()
                 size = self.ui.old_holes_tableWidget.item(row, 1).text()
-
+                sizes += int(size)
+                
                 if start_adrr.isnumeric() == False or size.isnumeric() == False:
                     qtw.QMessageBox.critical(self, 'fail', f'You have to add an unsigned number value in row {row + 1}')
                     self.holes = []
@@ -136,9 +138,14 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
                     self.holes = []
                     flag = 1
                     return
-
+                if sizes > memory_size:
+                    qtw.QMessageBox.critical(self, 'fail', "The holes'sizes are greater than memory size")
+                    self.holes = []
+                    flag = 1
+                    return
                 else:
                     hole = [int(start_adrr), float(size)]
+                    
                     self.holes.append(hole)
                 # send to back
 
@@ -259,8 +266,7 @@ class deallocateMainWindow(qtw.QMainWindow, Ui_deallo):
         # deallocate from old
         self.ui.deallocate_old_button.clicked.connect(self.remove_from_old)
 
-        # back to main
-        self.ui.back_button.clicked.connect(self.goBack)
+   
 
         # button to update memory
         self.ui.memory_button2.clicked.connect(self.showMemory)
@@ -297,11 +303,7 @@ class deallocateMainWindow(qtw.QMainWindow, Ui_deallo):
             self.retranslateUiDraw(self, text, i, length, myList, color)
             QtCore.QTimer.singleShot(0, self.ui.scrollAreaWidgetContents_22.adjustSize)
 
-    def goBack(self):
-        dea = TestMainWindow()
-        widget1.addWidget(dea)
-        widget1.setCurrentIndex(widget1.currentIndex() + 1)
-
+    
     def remove_from_new(self):
         if self.ui.new_process_table.rowCount() > 0:
             current_row = self.ui.new_process_table.currentRow()
