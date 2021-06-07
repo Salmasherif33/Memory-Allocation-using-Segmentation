@@ -104,6 +104,25 @@ class Ui_deallo(object):
         font.setPointSize(10)
         self.back_button.setFont(font)
         self.back_button.setObjectName("back_button")
+
+        self.scrollAreaa = QtWidgets.QScrollArea(deallo)
+        self.scrollAreaa.setGeometry(QtCore.QRect(1075, 50, 221, 500))
+        self.scrollAreaa.setWidgetResizable(True)
+        self.scrollAreaa.setObjectName("scrollArea")
+        self.scrollAreaWidgetContents_22 = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents_22.setGeometry(QtCore.QRect(0, 0, 198, 50))
+        self.scrollAreaWidgetContents_22.setObjectName("scrollAreaWidgetContents_22")
+        self.verticalLayout_22 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_22)
+        self.verticalLayout_22.setObjectName("verticalLayout_2")
+        self.scrollAreaa.setWidget(self.scrollAreaWidgetContents_22)
+        
+        self.memory_button2 = QtWidgets.QPushButton(deallo)
+        self.memory_button2.setGeometry(QtCore.QRect(900, 320, 141, 61))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.memory_button2.setFont(font)
+        self.memory_button2.setStyleSheet("")
+        self.memory_button2.setObjectName("memory_button")
         
         self.retranslateUi(deallo)
         QtCore.QMetaObject.connectSlotsByName(deallo)
@@ -127,7 +146,8 @@ class Ui_deallo(object):
         self.label_3.setText(_translate("deallo", "Select only one process to deallocate"))
         self.deallocate_new_button.setText(_translate("deallo", "Deallocate added process"))
         self.back_button.setText(_translate("deallo", "Back to allocate"))
-
+        self.memory_button2.setText(_translate("deallo", "Show Memory"))
+        
 
 if __name__ == "__main__":
     import sys

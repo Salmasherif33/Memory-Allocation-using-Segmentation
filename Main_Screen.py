@@ -336,6 +336,9 @@ class deallocateMainWindow(qtw.QMainWindow, Ui_deallo):
         self.fil_new_table(new_dummy)
         self.fill_old_table(new_dummy)
 
+        self.index = 0
+
+
         # deallocate from new
         self.ui.deallocate_new_button.clicked.connect(self.remove_from_new)
 
@@ -344,6 +347,128 @@ class deallocateMainWindow(qtw.QMainWindow, Ui_deallo):
 
         # back to main
         self.ui.back_button.clicked.connect(self.goBack)
+
+    #button to update memory
+        self.ui.memory_button2.clicked.connect(self.showMemory)
+
+    # Sharnoby's Part
+    def retranslateUiDraw(self, ChartWindow, text, i, length, myList, color):
+        _translate = QtCore.QCoreApplication.translate
+        self.ui.text.setHtml(_translate("ChartWindow", before_first_num1 + color + before_first_num2 + str(
+            myList[i]['start']) + before_name + myList[i]['name'] + far_before_last_num + "15" + before_last_num + str(
+            myList[i]['end']) + ending))
+
+    def showMemory(self):
+        if self.index == 0:
+            myList = [
+            {
+                'name': "P1:code",
+                'start': 0,
+                'end': 70
+            },
+            {
+                'name': "hole1",
+                'start': 70,
+                'end': 150
+            },
+            {
+                'name': "P2:Data",
+                'start': 150,
+                'end': 300
+            },
+            {
+                'name': "P2:code",
+                'start': 300,
+                'end': 600
+            },
+            {
+                'name': "P2:Data",
+                'start': 600,
+                'end': 685
+            },
+            {
+                'name': "P2:Data",
+                'start': 600,
+                'end': 685
+            },
+            {
+                'name': "Hole",
+                'start': 600,
+                'end': 685
+            },
+            {
+                'name': "P2:code",
+                'start': 300,
+                'end': 600
+            },
+            {
+                'name': "P2:Data",
+                'start': 600,
+                'end': 685
+            },
+            {
+                'name': "P2:Data",
+                'start': 600,
+                'end': 685
+            },
+            {
+                'name': "P2:Data",
+                'start': 900,
+                'end': 1250
+            }
+        ]
+            self.index = 1
+        else:
+            myList = [
+                {
+                    'name': "Hole",
+                    'start': 600,
+                    'end': 685
+                },
+                {
+                    'name': "P2:code",
+                    'start': 300,
+                    'end': 600
+                },
+                {
+                    'name': "P2:Data",
+                    'start': 600,
+                    'end': 685
+                },
+                {
+                    'name': "P2:Data",
+                    'start': 600,
+                    'end': 685
+                },
+                {
+                    'name': "P2:Data",
+                    'start': 900,
+                    'end': 1250
+                }
+            ]
+        for i in reversed(range(self.ui.verticalLayout_22.count())):
+            self.ui.verticalLayout_22.itemAt(i).widget().setParent(None)
+        #self.ui.verticalLayout_2.removeWidget(self.ui.text)
+
+        start = 0
+        for i in range(0, len(myList)):
+            text = str(i)
+            self.ui.text = qtw.QTextBrowser(self)
+            length = myList[i]['end'] - myList[i]['start']
+            self.ui.text.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+            self.ui.text.setObjectName(text)
+            self.ui.verticalLayout_22.addWidget(self.ui.text)
+            start += length
+            # qtw.setCentralWidget(self.ui.centralwidget)
+            if myList[i]['name'][0] == 'P' or myList[i]['name'][0] == 'P':
+                color = new_process
+            elif myList[i]['name'][0] == 'H' or myList[i]['name'][0] == 'h':
+                color = hole
+            else:
+                color = old_process
+            self.retranslateUiDraw(self, text, i, length, myList, color)
+            QtCore.QTimer.singleShot(0, self.ui.scrollAreaWidgetContents_22.adjustSize)
+
 
     def goBack(self):
         dea = TestMainWindow()
