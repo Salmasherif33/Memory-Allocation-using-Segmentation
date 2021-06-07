@@ -6,6 +6,7 @@ from deallocate import Ui_deallo
 from Basic_UI import Ui_Window_test
 from MemoryManager import MemoryManager
 from Process import Process
+
 before_first_num1 = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n""<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n""p, li { white-space: pre-wrap; }\n""</style></head><body"
 new_process = " bgcolor=\"#00acff\" "
 hole = " bgcolor=\"#FA669A\" "
@@ -15,29 +16,10 @@ before_first_num2 = " style=\" font-family:\'MS Shell Dlg 2\'; font-size:7.8pt; 
 before_name = "</span></p>\n""<p style=\" margin-top:13px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">              "
 far_before_last_num = "</span></p>\n""<p style=\" margin-top:"
 
-before_last_num= "px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt; font-weight:600;\">"
+before_last_num = "px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt; font-weight:600;\">"
 ending = "</span></p></body></html>"
 
-# get (new dummy) list of maps from backend
-new_dummy = [
-    {
-        'name': 'p1',
-        'no_of_segments': 4
 
-    },
-    {
-        'name': 'p2',
-        'no_of_segments': 5
-
-    },
-    {
-        'name': 'p3',
-        'no_of_segments': 5
-
-    },
-]
-
-memory_manager = None
 class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
 
     def __init__(self):
@@ -45,6 +27,8 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
 
         self.ui = Ui_Window_test()
         self.ui.setupUi(self)
+
+        self.memory_manager = None
 
         self.ui.size_doubleSpinBox.setMaximum(float('+inf'))
         self.ui.size_doubleSpinBox.setDecimals(5)
@@ -81,7 +65,7 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
         # button to add old processes
         self.ui.add_old_processes_pushButton.clicked.connect(self.add_old_processes)
 
-        #button to update memory
+        # button to update memory
         self.ui.memory_button.clicked.connect(self.showMemory)
 
     # Sharnoby's Part
@@ -95,97 +79,11 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
         if len(self.holes) == 0:
             qtw.QMessageBox.critical(self, 'fail', "please,Fill the holes first")
             return
-
-        if self.index == 0:
-            myList = [
-            {
-                'name': "P1:code",
-                'start': 0,
-                'end': 70
-            },
-            {
-                'name': "hole1",
-                'start': 70,
-                'end': 150
-            },
-            {
-                'name': "P2:Data",
-                'start': 150,
-                'end': 300
-            },
-            {
-                'name': "P2:code",
-                'start': 300,
-                'end': 600
-            },
-            {
-                'name': "P2:Data",
-                'start': 600,
-                'end': 685
-            },
-            {
-                'name': "P2:Data",
-                'start': 600,
-                'end': 685
-            },
-            {
-                'name': "Hole",
-                'start': 600,
-                'end': 685
-            },
-            {
-                'name': "P2:code",
-                'start': 300,
-                'end': 600
-            },
-            {
-                'name': "P2:Data",
-                'start': 600,
-                'end': 685
-            },
-            {
-                'name': "P2:Data",
-                'start': 600,
-                'end': 685
-            },
-            {
-                'name': "P2:Data",
-                'start': 900,
-                'end': 1250
-            }
-        ]
-            self.index = 1
-        else:
-            myList = [
-                {
-                    'name': "Hole",
-                    'start': 600,
-                    'end': 685
-                },
-                {
-                    'name': "P2:code",
-                    'start': 300,
-                    'end': 600
-                },
-                {
-                    'name': "P2:Data",
-                    'start': 600,
-                    'end': 685
-                },
-                {
-                    'name': "P2:Data",
-                    'start': 600,
-                    'end': 685
-                },
-                {
-                    'name': "P2:Data",
-                    'start': 900,
-                    'end': 1250
-                }
-            ]
+        myList = self.memory_manager.get_memory_map()
+        print(myList)
         for i in reversed(range(self.ui.verticalLayout_2.count())):
             self.ui.verticalLayout_2.itemAt(i).widget().setParent(None)
-        #self.ui.verticalLayout_2.removeWidget(self.ui.text)
+        # self.ui.verticalLayout_2.removeWidget(self.ui.text)
 
         start = 0
         for i in range(0, len(myList)):
@@ -220,29 +118,30 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
         try:
             rowCount = self.ui.old_holes_tableWidget.rowCount()
             memory_size = self.ui.size_doubleSpinBox.value()
-            if(memory_size == 0):
+            if (memory_size == 0):
                 qtw.QMessageBox.critical(self, 'fail', 'You have to add memory size')
                 return
             flag = 0
             for row in range(rowCount):
                 start_adrr = self.ui.old_holes_tableWidget.item(row, 0).text()
                 size = self.ui.old_holes_tableWidget.item(row, 1).text()
-                
-                if  start_adrr.isnumeric() == False or size.isnumeric() == False:
-                    qtw.QMessageBox.critical(self, 'fail', f'You have to add an unsigned number value in row {row+1}')
+
+                if start_adrr.isnumeric() == False or size.isnumeric() == False:
+                    qtw.QMessageBox.critical(self, 'fail', f'You have to add an unsigned number value in row {row + 1}')
                     self.holes = []
-                    flag = 1 
+                    flag = 1
                     return
-                if int(size) <=0 or int(start_adrr) < 0:
+                if int(size) <= 0 or int(start_adrr) < 0:
                     qtw.QMessageBox.critical(self, 'fail', 'You have to add a number greater than 0')
                     self.holes = []
-                    flag = 1 
+                    flag = 1
                     return
 
                 else:
                     hole = [int(start_adrr), float(size)]
                     self.holes.append(hole)
                 # send to back
+
             if len(self.holes) == 0 and flag == 0:
                 qtw.QMessageBox.critical(self, 'fail', 'You have to add holes to add processes')
             else:
@@ -250,6 +149,7 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
                 self.ui.add_old_processes_pushButton.setEnabled(False)
                 print(self.holes)
                 print(memory_size)
+                self.memory_manager = MemoryManager(memory_size, self.holes)
         except:
             qtw.QMessageBox.critical(self, 'fail', 'Something went wrong')
 
@@ -272,7 +172,7 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
             qtw.QMessageBox.critical(self, 'fail', "all segments have been added")
 
     def _addNewProcess(self):
-        is_added = false
+        is_added = False
         if self.ui.number_of_segments.text() == '':
             qtw.QMessageBox.critical(self, 'fail', "please, enter number of segments of this process")
         elif len(self.holes) <= 0:
@@ -285,18 +185,18 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
             self.ui.algorithm.setEnabled(False)  # disable comboBox
             segments = self.createSegments()
             print(segments)
-            new_pro = process(self.process_index, segments)
+            new_pro = Process(self.process_index, segments)
             self.process_index += 1
             print(self.process_index)
             self.clearScreen()
-            if string(self.ui.algorithm.text()).lower == "best fit":
-                is_added = memory_manager.allocate_best_fit(new_pro)
-            elif string(self.ui.algorithm.text()).lower == "first fit":
-                is_added = memory_manager.allocate_firt_fit(new_pro)
-            elif string(self.ui.algorithm.text()).lower == "worst fit":
-                is_added = memory_manager.allocate_worst_fit(new_pro)
+            #if self.ui.algorithm.text() == "best fit":
+            is_added = self.memory_manager.allocate_best_fit(new_pro)
+            # elif self.ui.algorithm.text() == "first fit":
+            #     is_added = self.memory_manager.allocate_firt_fit(new_pro)
+            # elif self.ui.algorithm.text() == "worst fit":
+            #     is_added = self.memory_manager.allocate_worst_fit(new_pro)
             if not is_added:
-                qtw.QMessageBox.critical(self, 'warning', "ERROR! Process has not been added")
+                 qtw.QMessageBox.critical(self, 'warning', "ERROR! Process has not been added")
 
     def clearScreen(self):
         no_of_segments = self.ui.number_of_segments.text()
@@ -312,18 +212,18 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
         list_of_segments = [dict() for number in range(number_of_dictionaries)]
         for seg_index in range(number_of_dictionaries):
             if not self.ui.process_table.item(seg_index, 1).text().isnumeric():
-                qtw.QMessageBox.critical(self, 'fail', f'You have to add an integer value in row {seg_index+1}')
+                qtw.QMessageBox.critical(self, 'fail', f'You have to add an integer value in row {seg_index + 1}')
                 list_of_segments.clear()
                 return
-            
+
             elif int(self.ui.process_table.item(seg_index, 1).text()) <= 0:
                 qtw.QMessageBox.critical(self, 'fail', 'You have to add a number greater than 0')
                 list_of_segments.clear()
                 return
-            
+
             list_of_segments[seg_index]['name'] = self.ui.process_table.item(seg_index, 0).text()
             list_of_segments[seg_index]['size'] = int(self.ui.process_table.item(seg_index, 1).text())
-            
+
         qtw.QMessageBox.information(self, 'success', 'Process is added sucessfully')
 
         return list_of_segments
@@ -332,24 +232,26 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
         if len(self.holes) == 0 and self.process_index == 0:
             qtw.QMessageBox.critical(self, 'fail', 'you have to add holes or processses first')
             return
-        dea = deallocateMainWindow()
+        dea = deallocateMainWindow(self.memory_manager)
         widget1.addWidget(dea)
         widget1.setCurrentIndex(widget1.currentIndex() + 1)
+
     index = 0
 
 
 class deallocateMainWindow(qtw.QMainWindow, Ui_deallo):
-    def __init__(self):
+    def __init__(self, memory_man):
         super().__init__()
 
         self.ui = Ui_deallo()
         self.ui.setupUi(self)
 
-        self.fil_new_table(new_dummy)
-        self.fill_old_table(new_dummy)
+        self.mem_man = memory_man
+
+        self.fil_new_table()
+        self.fill_old_table()
 
         self.index = 0
-
 
         # deallocate from new
         self.ui.deallocate_new_button.clicked.connect(self.remove_from_new)
@@ -360,7 +262,7 @@ class deallocateMainWindow(qtw.QMainWindow, Ui_deallo):
         # back to main
         self.ui.back_button.clicked.connect(self.goBack)
 
-    #button to update memory
+        # button to update memory
         self.ui.memory_button2.clicked.connect(self.showMemory)
 
     # Sharnoby's Part
@@ -371,96 +273,10 @@ class deallocateMainWindow(qtw.QMainWindow, Ui_deallo):
             myList[i]['end']) + ending))
 
     def showMemory(self):
-        if self.index == 0:
-            myList = [
-            {
-                'name': "P1:code",
-                'start': 0,
-                'end': 70
-            },
-            {
-                'name': "hole1",
-                'start': 70,
-                'end': 150
-            },
-            {
-                'name': "P2:Data",
-                'start': 150,
-                'end': 300
-            },
-            {
-                'name': "P2:code",
-                'start': 300,
-                'end': 600
-            },
-            {
-                'name': "P2:Data",
-                'start': 600,
-                'end': 685
-            },
-            {
-                'name': "P2:Data",
-                'start': 600,
-                'end': 685
-            },
-            {
-                'name': "Hole",
-                'start': 600,
-                'end': 685
-            },
-            {
-                'name': "P2:code",
-                'start': 300,
-                'end': 600
-            },
-            {
-                'name': "P2:Data",
-                'start': 600,
-                'end': 685
-            },
-            {
-                'name': "P2:Data",
-                'start': 600,
-                'end': 685
-            },
-            {
-                'name': "P2:Data",
-                'start': 900,
-                'end': 1250
-            }
-        ]
-            self.index = 1
-        else:
-            myList = [
-                {
-                    'name': "Hole",
-                    'start': 600,
-                    'end': 685
-                },
-                {
-                    'name': "P2:code",
-                    'start': 300,
-                    'end': 600
-                },
-                {
-                    'name': "P2:Data",
-                    'start': 600,
-                    'end': 685
-                },
-                {
-                    'name': "P2:Data",
-                    'start': 600,
-                    'end': 685
-                },
-                {
-                    'name': "P2:Data",
-                    'start': 900,
-                    'end': 1250
-                }
-            ]
+        myList = self.mem_man.get_memory_map()
         for i in reversed(range(self.ui.verticalLayout_22.count())):
             self.ui.verticalLayout_22.itemAt(i).widget().setParent(None)
-        #self.ui.verticalLayout_2.removeWidget(self.ui.text)
+        # self.ui.verticalLayout_2.removeWidget(self.ui.text)
 
         start = 0
         for i in range(0, len(myList)):
@@ -481,7 +297,6 @@ class deallocateMainWindow(qtw.QMainWindow, Ui_deallo):
             self.retranslateUiDraw(self, text, i, length, myList, color)
             QtCore.QTimer.singleShot(0, self.ui.scrollAreaWidgetContents_22.adjustSize)
 
-
     def goBack(self):
         dea = TestMainWindow()
         widget1.addWidget(dea)
@@ -495,29 +310,33 @@ class deallocateMainWindow(qtw.QMainWindow, Ui_deallo):
             else:
                 name_of_deleted = self.ui.new_process_table.item(current_row, 0).text()
                 print(name_of_deleted)
-                # send name_of_deleted to backend
                 self.ui.new_process_table.removeRow(current_row)
-                self.ui.deallocate_new_button.setEnabled(False)
-                self.ui.deallocate_old_button.setEnabled(False)
+                print(name_of_deleted)
 
-    def fil_new_table(self, new_dummy):
-        for i in range(len(new_dummy)):
+                # send name_of_deleted to backend
+                self.mem_man.deallocate(name_of_deleted)
+
+
+    def fil_new_table(self):
+        process_from_back = self.mem_man.get_new_processes()
+        for i in range(len(process_from_back)):
             self.ui.new_process_table.insertRow(self.ui.new_process_table.rowCount())
         row = 0
-        for process in new_dummy:
+        for process in process_from_back:
             self.ui.new_process_table.setItem(row, 0, qtw.QTableWidgetItem(process['name']))
-            self.ui.new_process_table.setItem(row, 1, qtw.QTableWidgetItem(str(process['no_of_segments'])))
+            self.ui.new_process_table.setItem(row, 1, qtw.QTableWidgetItem(str(process['number of segments'])))
             row += 1
 
-    def fill_old_table(self, new_dummy):
-        for i in range(len(new_dummy)):
+    def fill_old_table(self):
+        process_from_back = self.mem_man.get_old_processes()
+        for i in range(len(process_from_back)):
             self.ui.old_process_table.insertRow(self.ui.old_process_table.rowCount())
         row = 0
-        for process in new_dummy:
+        for process in process_from_back:
             self.ui.old_process_table.setItem(row, 0, qtw.QTableWidgetItem(process['name']))
             # staring add.
-            self.ui.old_process_table.setItem(row, 1, qtw.QTableWidgetItem(str(process['no_of_segments'])))
-            # self.ui.old_process_table.setItem(row, 1, qtw.QTableWidgetItem(str(process['size'])))
+            self.ui.old_process_table.setItem(row, 1, qtw.QTableWidgetItem(str(process['start address'])))
+            self.ui.old_process_table.setItem(row, 2, qtw.QTableWidgetItem(str(process['size'])))
             row += 1
 
     def remove_from_old(self):
@@ -528,16 +347,17 @@ class deallocateMainWindow(qtw.QMainWindow, Ui_deallo):
             else:
                 name_of_deleted = self.ui.old_process_table.item(current_row, 0).text()
                 print(name_of_deleted)
-                # send name_of_deleted to backend
                 self.ui.old_process_table.removeRow(current_row)
-                self.ui.deallocate_old_button.setEnabled(False)
-                self.ui.deallocate_new_button.setEnabled(False)
+                print(name_of_deleted)
+                # send name_of_deleted to backend
+                self.mem_man.deallocate(name_of_deleted)
+
 
 
 # def _toMem(self):
-    # show mem
-    # def allocate_to_mem(self):
-    # functions from backend
+# show mem
+# def allocate_to_mem(self):
+# functions from backend
 
 
 if __name__ == "__main__":
