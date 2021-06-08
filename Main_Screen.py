@@ -193,17 +193,19 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
             segments = self.createSegments()
             print(segments)
             new_pro = Process(self.process_index, segments)
-            self.process_index += 1
-            print(self.process_index)
             self.clearScreen()
-            #if self.ui.algorithm.text() == "best fit":
-            is_added = self.memory_manager.allocate_best_fit(new_pro)
-            # elif self.ui.algorithm.text() == "first fit":
-            #     is_added = self.memory_manager.allocate_firt_fit(new_pro)
-            # elif self.ui.algorithm.text() == "worst fit":
-            #     is_added = self.memory_manager.allocate_worst_fit(new_pro)
+            print(self.ui.algorithm.currentText())
+            if self.ui.algorithm.currentText() == "Best Fit":
+                is_added = self.memory_manager.allocate_best_fit(new_pro)
+            elif self.ui.algorithm.currentText() == "First Fit":
+                is_added = self.memory_manager.allocate_first_fit(new_pro)
+            elif self.ui.algorithm.currentText() == "Worst Fit":
+                is_added = self.memory_manager.allocate_worst_fit(new_pro)
             if not is_added:
                  qtw.QMessageBox.critical(self, 'warning', "ERROR! Process has not been added")
+            else:
+                qtw.QMessageBox.information(self, 'success', 'Process is added sucessfully')
+                self.process_index += 1
 
     def clearScreen(self):
         no_of_segments = self.ui.number_of_segments.text()
@@ -231,7 +233,6 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
             list_of_segments[seg_index]['name'] = self.ui.process_table.item(seg_index, 0).text()
             list_of_segments[seg_index]['size'] = int(self.ui.process_table.item(seg_index, 1).text())
 
-        qtw.QMessageBox.information(self, 'success', 'Process is added sucessfully')
 
         return list_of_segments
 
