@@ -176,6 +176,10 @@ class MemoryManager:
         all_processes = self._get_all_processes_segments() + self.old_processes
         all_processes.sort(key=lambda segment: segment.start_address)
 
+        if len(all_processes) == 0:
+            self.holes = [Block('Hole', 0, self.total_memory_size)]
+            return
+
         current_position = 0
         holes = []
 
