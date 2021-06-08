@@ -66,8 +66,11 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
         self.ui.add_old_processes_pushButton.clicked.connect(self.add_old_processes)
 
         # button to update memory
-        self.ui.memory_button.clicked.connect(self.showMemory)
+        self.ui.memory_button.clicked.connect(lambda: self.showMemory(1))
 
+
+        #button for external compaction
+        self.ui.compaction_button.clicked.connect(lambda: self.showMemory(0))
     # Sharnoby's Part
     def retranslateUiDraw(self, ChartWindow, text, i, length, myList, color):
         _translate = QtCore.QCoreApplication.translate
@@ -75,11 +78,16 @@ class TestMainWindow(qtw.QMainWindow, Ui_Window_test):
             myList[i]['start']) + before_name + myList[i]['name'] + far_before_last_num + "15" + before_last_num + str(
             myList[i]['end']) + ending))
 
-    def showMemory(self):
+    def showMemory(self,flag):
         if len(self.holes) == 0:
             qtw.QMessageBox.critical(self, 'fail', "please,Fill the holes first")
             return
-        myList = self.memory_manager.get_memory_map()
+        if flag == 1:
+            myList = self.memory_manager.get_memory_map()
+        else:
+            self.memory_manager.external_compaction()
+            myList = self.memory_manager.get_memory_map()
+            
         print(myList)
         for i in reversed(range(self.ui.verticalLayout_2.count())):
             self.ui.verticalLayout_2.itemAt(i).widget().setParent(None)
@@ -270,7 +278,11 @@ class deallocateMainWindow(qtw.QMainWindow, Ui_deallo):
    
 
         # button to update memory
-        self.ui.memory_button2.clicked.connect(self.showMemory)
+        self.ui.memory_button2.clicked.connect(lambda: self.showMemory(1))
+        
+        #button for external compaction
+        self.ui.compaction_button.clicked.connect(lambda: self.showMemory(0))
+
 
     # Sharnoby's Part
     def retranslateUiDraw(self, ChartWindow, text, i, length, myList, color):
@@ -279,8 +291,13 @@ class deallocateMainWindow(qtw.QMainWindow, Ui_deallo):
             myList[i]['start']) + before_name + myList[i]['name'] + far_before_last_num + "15" + before_last_num + str(
             myList[i]['end']) + ending))
 
-    def showMemory(self):
-        myList = self.mem_man.get_memory_map()
+    def showMemory(self,flag):
+        if flag == 1:
+            myList = self.mem_man.get_memory_map()
+        else:
+            self.mem_man.external_compaction()
+            myList = self.mem_man.get_memory_map()
+
         for i in reversed(range(self.ui.verticalLayout_22.count())):
             self.ui.verticalLayout_22.itemAt(i).widget().setParent(None)
         # self.ui.verticalLayout_2.removeWidget(self.ui.text)

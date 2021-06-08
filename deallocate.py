@@ -118,6 +118,17 @@ class Ui_deallo(object):
         self.memory_button2.setStyleSheet("")
         self.memory_button2.setObjectName("memory_button")
         
+        
+        
+        self.compaction_button = QtWidgets.QPushButton("Compaction",deallo)
+        self.compaction_button.setGeometry(QtCore.QRect(1100, 560, 161, 61))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.compaction_button.setFont(font)
+        self.compaction_button.setStyleSheet("")
+        self.compaction_button.setObjectName("compaction_button")
+        
+        
         self.retranslateUi(deallo)
         QtCore.QMetaObject.connectSlotsByName(deallo)
 

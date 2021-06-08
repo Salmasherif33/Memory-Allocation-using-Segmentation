@@ -278,30 +278,19 @@ class Ui_Window_test(object):
         self.gridLayout.addWidget(self.label_122, 2, 0, 1, 1)
         Window_test.setCentralWidget(self.centralwidget)
         
-        ########################################
-
-        
-        # start = 0
-        # for i in range(0,len(myList)):
-        #     text = str(i)
-        #     self.text = QtWidgets.QTextBrowser(self.centralwidget)
-        #     length = myList[i]['end'] - myList[i]['start']
-        #     self.text.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        #     self.text.setObjectName(text)
-        #     self.verticalLayout_2.addWidget(self.text)
-        #     start += length
-        #     Window_test.setCentralWidget(self.centralwidget)
-        #     if myList[i]['name'][0] == 'P' or myList[i]['name'][0] == 'P' :
-        #         color = new_process
-        #     elif myList[i]['name'][0] == 'H' or myList[i]['name'][0] == 'h' :
-        #         color = hole
-        #     else:
-        #         color = old_process
-        #     self.retranslateUiDraw(Window_test,text,i,length,myList,color)
-        #     QtCore.QTimer.singleShot(0, self.scrollAreaWidgetContents_2.adjustSize)
-        #
         self.scrollArea.setWidget(self.scrollAreaWidgetContents_2)
         Window_test.setCentralWidget(self.centralwidget)
+        
+        
+        self.compaction_button = QtWidgets.QPushButton("Compaction",self.centralwidget)
+        self.compaction_button.setGeometry(QtCore.QRect(1100, 560, 161, 61))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.compaction_button.setFont(font)
+        self.compaction_button.setStyleSheet("")
+        self.compaction_button.setObjectName("compaction_button")
+        
+        
 
         self.retranslateUi(Window_test)
         QtCore.QMetaObject.connectSlotsByName(Window_test)
